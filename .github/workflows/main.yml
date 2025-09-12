@@ -6,31 +6,53 @@ permissions:
 
 on:
   workflow_dispatch:
+    inputs:
+      kernelsu_variant:
+        description: 'KernelSU variant (WKSU, KSUN-OFFICIAL, KSUN-SUSFS)'
+        required: false
+        default: 'WKSU'
+        type: choice
+        options:
+          - WKSU
+          - KSUN-OFFICIAL
+          - KSUN-SUSFS
 
 jobs:
   build-a12-5-10:
     uses: ./.github/workflows/kernel-a12-5-10.yml
     secrets: inherit
+    with:
+      kernelsu_variant: ${{ inputs.kernelsu_variant }}
 
   build-a13-5-10:
     uses: ./.github/workflows/kernel-a13-5-10.yml
     secrets: inherit
+    with:
+      kernelsu_variant: ${{ inputs.kernelsu_variant }}
 
   build-a13-5-15:
     uses: ./.github/workflows/kernel-a13-5-15.yml
     secrets: inherit
+    with:
+      kernelsu_variant: ${{ inputs.kernelsu_variant }}
 
   build-a14-5-15:
     uses: ./.github/workflows/kernel-a14-5-15.yml
     secrets: inherit
+    with:
+      kernelsu_variant: ${{ inputs.kernelsu_variant }}
 
   build-a14-6-1:
     uses: ./.github/workflows/kernel-a14-6-1.yml
     secrets: inherit
+    with:
+      kernelsu_variant: ${{ inputs.kernelsu_variant }}
 
   build-a15-6-6:
     uses: ./.github/workflows/kernel-a15-6-6.yml
     secrets: inherit
+    with:
+      kernelsu_variant: ${{ inputs.kernelsu_variant }}
 
   release:
     runs-on: ubuntu-latest
@@ -95,6 +117,13 @@ jobs:
           # Get WKSU latest commit from wild branch
           WKSU_REF=$(git ls-remote "https://github.com/WildKernels/Wild_KSU.git" refs/heads/wild | awk '{print $1}')
           WKSU_URL="https://github.com/WildKernels/Wild_KSU/commit/$WKSU_REF"
+          KSUN_OFFICIAL_REF=$(git ls-remote "https://github.com/KernelSU-Next/KernelSU-Next.git" refs/heads/next | awk '{print $1}')
+          KSUN_OFFICIAL_URL="https://github.com/KernelSU-Next/KernelSU-Next/commit/$KSUN_OFFICIAL_REF"
+          KSUN_SUSFS_REF=$(git ls-remote "https://github.com/KernelSU-Next/KernelSU-Next.git" refs/heads/susfs-1.5.9 | awk '{print $1}')
+          KSUN_SUSFS_URL="https://github.com/KernelSU-Next/KernelSU-Next/commit/$KSUN_SUSFS_REF"
+          echo "KSUN_OFFICIAL_REF=$KSUN_OFFICIAL_REF" >> $GITHUB_ENV
+          echo "KSUN_OFFICIAL_URL=$KSUN_OFFICIAL_URL" >> $GITHUB_ENV
+          echo "KSUN_SUSFS_REF=$KSUN_SUSFS_REF" >> $GITHUB_ENV
           echo "WKSU_REF=$WKSU_REF" >> $GITHUB_ENV
           echo "WKSU_URL=$WKSU_URL" >> $GITHUB_ENV
 
@@ -128,7 +157,7 @@ jobs:
           Please ensure you have proper backups before installation.
       
           Features:
-          -> Wild KSU
+          -> Wild KSU OR KernelSU-Next Support
           -> Multi Manager Support for WKSU Manager & KernelSU-Next Manager (Only Install One)
           -> SUSFS ඞ v1.5.9
           -> Scope-Minimized Manual hooks v1.4
@@ -139,6 +168,7 @@ jobs:
           -> IPSet Support for Advanced Network Filtering
           -> Wireguard Support
           -> BBR v1 Support
+          -> Force Dont reduce TTL/HL
       
           Notes:
           -> SUS SU Mode 2 will show as disabled or not compatble due to non-kprobe hooks and is not needed anymore!
@@ -153,6 +183,8 @@ jobs:
           
           Commit Hashes (at the time of release):
           -> WKSU: [${{ env.WKSU_REF }}](${{ env.WKSU_URL }})
+          -> KSUN-OFFICIAL: [${{ env.KSUN_OFFICIAL_REF }}](${{ env.KSUN_OFFICIAL_URL }})
+          -> KSUN-SUSFS-1.5.9: [${{ env.KSUN_SUSFS_REF }}](${{ env.KSUN_SUSFS_URL }})
 
           -> SUSFS4KSU: 
             -> gki-android12-5.10: [${{ env.COMMIT_HASH_gki_android12_5_10 }}](${{ env.COMMIT_URL_gki_android12_5_10 }})
