@@ -240,6 +240,6 @@ jobs:
                 -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
                 -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
                 -F document=@"$zipfile" \
-                -F caption="File Kernel Zip: $(basename "$zipfile")\n*Date:* $BUILD_DATE\n*KernelSU Variant:* $KERNEL_VARIANT\n*Kernel Version:* $KERNEL_VERSION"
+                -F caption="File Kernel Zip: $(basename "$zipfile")\n*Date:* $BUILD_DATE\n*KernelSU Variant:* $KERNEL_VARIANT\n*Kernel Version:* $KERNEL_VERSION\n *This Kernel GKI!*"
             fi
           done
