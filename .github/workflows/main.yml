@@ -221,12 +221,21 @@ jobs:
             
       - name: Send Telegram Notification
         run: |
+          RELEASE_BODY=$(cat release_body.md)
+          FILES_LIST=$(ls ./downloaded-artifacts/**/*.zip | xargs -n1 basename | paste -sd ', ' -)
+          MESSAGE="🌽 *New Kernel Release Uploaded*\n📦 *Repository:* [${{ github.repository }}](https://github.com/${{ github.repository }})\n✏️ *Commit:* [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})\n[🔗 View GitHub Release](https://github.com/${{ github.repository }}/releases/tag/${{ env.NEW_TAG }})\n*Release Body:*\n$RELEASE_BODY\n\n*Files:*\n$FILES_LIST"
           curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
             -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
             -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
-            -F text="
-            🌽 *New Kernel Release Uploaded*  
-            📦 *Repository:* [${{ github.repository }}](https://github.com/${{ github.repository }})  
-            ✏️ *Commit:* [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})  
-            [🔗 View GitHub Release](https://github.com/${{ github.repository }}/releases/tag/${{ env.NEW_TAG }})" \
+            -F text="$MESSAGE" \
             -F parse_mode="Markdown"
+
+          for zipfile in ./downloaded-artifacts/**/*.zip; do
+            if [ -f "$zipfile" ]; then
+              curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+                -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+                -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
+                -F document=@"$zipfile" \
+                -F caption="Kernel ZIP: $(basename "$zipfile")"
+            fi
+          done
