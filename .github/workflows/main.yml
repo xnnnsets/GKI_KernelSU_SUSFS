@@ -224,6 +224,9 @@ jobs:
         run: |
           RELEASE_BODY=$(cat release_body.md)
           FILES_LIST=$(ls ./downloaded-artifacts/**/*.zip | xargs -n1 basename | paste -sd ', ' -)
+          BUILD_DATE=$(TZ=Asia/Bangkok date "+%Y-%m-%d %H:%M:%S")
+          KERNEL_VARIANT="${{ inputs.kernelsu_variant }}"
+          KERNEL_VERSION=$(basename "$zipfile" | grep -oP '\d+\.\d+\.\d+')
           MESSAGE="🌽 *New Kernel Release Uploaded*\n📦 *Repository:* [${{ github.repository }}](https://github.com/${{ github.repository }})\n✏️ *Commit:* [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})\n[🔗 View GitHub Release](https://github.com/${{ github.repository }}/releases/tag/${{ env.NEW_TAG }})\n*Release Body:*\n$RELEASE_BODY\n\n*Files:*\n$FILES_LIST"
           curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
             -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
@@ -237,6 +240,6 @@ jobs:
                 -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
                 -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
                 -F document=@"$zipfile" \
-                -F caption="Kernel ZIP: $(basename "$zipfile")"
+                -F caption="File Kernel Zip: $(basename "$zipfile")\n*Date:* $BUILD_DATE\n*KernelSU Variant:* $KERNEL_VARIANT\n*Kernel Version:* $KERNEL_VERSION"
             fi
           done
