@@ -124,6 +124,7 @@ jobs:
           echo "KSUN_OFFICIAL_REF=$KSUN_OFFICIAL_REF" >> $GITHUB_ENV
           echo "KSUN_OFFICIAL_URL=$KSUN_OFFICIAL_URL" >> $GITHUB_ENV
           echo "KSUN_SUSFS_REF=$KSUN_SUSFS_REF" >> $GITHUB_ENV
+          echo "KSUN_SUSFS_URL=$KSUN_SUSFS_URL" >> $GITHUB_ENV
           echo "WKSU_REF=$WKSU_REF" >> $GITHUB_ENV
           echo "WKSU_URL=$WKSU_URL" >> $GITHUB_ENV
 
