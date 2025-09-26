@@ -206,6 +206,22 @@ jobs:
           cp ../../kernel_patches/wild/hooks/scope_min_manual_hooks_v1.4.patch ./
           patch -p1 --forward -F 3 < scope_min_manual_hooks_v1.4.patch
 
+      - name: Dont reduce TTL or HL 5.10 and 5.15
+        if: ${{ inputs.kernel_version == '5.10' || inputs.kernel_version == '5.15' }}
+        run: |
+          echo "Changing to configuration directory: $CONFIG..."
+          cd "$CONFIG/common"
+          curl -L -o Dont_reduce_TTL.patch "https://raw.githubusercontent.com/xnnnsets/patch/refs/heads/main/${{ inputs.kernel_version }}/Dont_reduce_TTL.patch"
+          patch -p1 --forward -F 3 < Dont_reduce_TTL.patch
+
+      - name: Dont reduce TTL or HL 6.6 and 6.1
+        if: ${{ inputs.kernel_version == '6.1' || inputs.kernel_version == '6.6' }}
+        run: |
+          echo "Changing to configuration directory: $CONFIG..."
+          cd "$CONFIG/common"
+          curl -L -o Dont_reduce_TTL.patch "https://raw.githubusercontent.com/xnnnsets/patch/refs/heads/main/${{ inputs.kernel_version }}/Dont_reduce_TTL.patch"
+          patch -p1 --forward -F 3 < Dont_reduce_TTL.patch
+
       - name: Apply Module Symbol Version Fix Patch
         run: |
           if [[ "${{ inputs.kernel_version }}" == "6.1" || "${{ inputs.kernel_version }}" == "6.6" ]]; then
