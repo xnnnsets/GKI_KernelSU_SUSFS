@@ -73,15 +73,8 @@ jobs:
       - name: Maximize Build Space
         uses: AdityaGarg8/remove-unwanted-software@v5
         with:
-          # remove-dotnet: 'true'          # Frees ~2 GB
-          # remove-android: 'true'         # Frees ~9 GB
-          # remove-haskell: 'true'         # Frees ~5.2 GB
-          # remove-codeql: 'true'          # Frees ~5.4 GB
-          # remove-docker-images: 'true'   # Frees ~3.2 GB
-          # remove-large-packages: 'true'  # Frees ~3.1 GB
-          remove-swapfile: 'true'        # Frees ~4 GB
-          # remove-cached-tools: 'false'   # Avoid unless confirmed safe
-          verbose: 'true'                # Enable detailed logging
+          remove-swapfile: 'true'
+          verbose: 'true'
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -116,7 +109,6 @@ jobs:
 
       - name: Get KernelSU variant refs and links
         run: |
-          # Get WKSU latest commit from wild branch
           WKSU_REF=$(git ls-remote "https://github.com/WildKernels/Wild_KSU.git" refs/heads/wild | awk '{print $1}')
           WKSU_URL="https://github.com/WildKernels/Wild_KSU/commit/$WKSU_REF"
           KSUN_OFFICIAL_REF=$(git ls-remote "https://github.com/KernelSU-Next/KernelSU-Next.git" refs/heads/next | awk '{print $1}')
@@ -136,12 +128,9 @@ jobs:
             if [ -z "$LATEST_TAG" ]; then
               LATEST_TAG="v1.5.10-r0"
             fi
-            
             NEW_TAG=$(echo "$LATEST_TAG" | awk -F'-r' '{suffix=$2; if (!suffix) suffix=0; suffix++; printf "%s-r%d", $1, suffix}')
-    
             echo "New tag: $NEW_TAG"
             echo "NEW_TAG=${NEW_TAG}" >> $GITHUB_ENV
-
             git tag $NEW_TAG
             git push origin $NEW_TAG
 
@@ -150,6 +139,11 @@ jobs:
         with:
           path: ./downloaded-artifacts
           pattern: '*-make'
+
+      - name: Display Downloaded Files
+        run: |
+          echo "=== Struktur Downloaded Artifacts ==="
+          find ./downloaded-artifacts
 
       - name: Set release body
         run: |
@@ -216,10 +210,7 @@ jobs:
 
       - name: Upload Release Assets
         run: |
-          for file in ./downloaded-artifacts/*/*; do
-            if [ -d "$file" ]; then
-              continue
-            fi
+          for file in $(find ./downloaded-artifacts -type f); do
             echo "Uploading $file..."
             gh release upload ${{ env.NEW_TAG }} "$file"
           done
@@ -227,24 +218,24 @@ jobs:
       - name: Display Files Uploaded
         run: |
           echo "GitHub release created with the following files:"
-          ls ./downloaded-artifacts/**/*
+          find ./downloaded-artifacts -type f
             
       - name: Send Telegram Notification
         run: |
           RELEASE_BODY=$(cat release_body.md)
-          FILES_LIST=$(ls ./downloaded-artifacts/**/*.zip | xargs -n1 basename | paste -sd ', ' -)
+          FILES_LIST=$(find ./downloaded-artifacts -type f -name "*.zip" | xargs -n1 basename | paste -sd ', ' -)
           BUILD_DATE=$(TZ=Asia/Bangkok date "+%Y-%m-%d %H:%M:%S")
           KERNEL_VARIANT="${{ inputs.kernelsu_variant }}"
-          MESSAGE="🌽 *New Kernel Release Uploaded*\n📦 *Repository:* [${{ github.repository }}](https://github.com/${{ github.repository }})\n✏️ *Commit:* [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})\n[🔗 View GitHub Release](https://github.com/${{ github.repository }}/releases/tag/${{ env.NEW_TAG }})\n*Release Body:*\n$RELEASE_BODY\n\n*Files:*\n$FILES_LIST"
+          MESSAGE="🌽 *New Kernel Release Uploaded*\n📦 *Repository:* [${{ github.repository }}](https://github.com/${{ github.repository }})\n✏️ *Commit:* [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})\n🗂️ *Files:* $FILES_LIST\n🕒 *Date:* $BUILD_DATE\n🔀 *KernelSU Variant:* $KERNEL_VARIANT\n\n$RELEASE_BODY"
           curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
             -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
             -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
             -F text="$MESSAGE" \
             -F parse_mode="Markdown"
 
-          for zipfile in ./downloaded-artifacts/**/*.zip; do
+          for zipfile in $(find ./downloaded-artifacts -type f -name "*.zip"); do
             if [ -f "$zipfile" ]; then
-            KERNEL_VERSION=$(basename "$zipfile" | grep -oP '\d+\.\d+\.\d+')
+              KERNEL_VERSION=$(basename "$zipfile" | grep -oP '\d+\.\d+\.\d+')
               curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
                 -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
                 -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
