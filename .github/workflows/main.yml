@@ -210,7 +210,7 @@ jobs:
 
       - name: Upload Release Assets
         run: |
-          # Sort by version (misal: kernel-6.6.102.zip, kernel-6.5.0.zip, dst akan urut versi)
+          # Upload .zip kernel berurutan versi (sort -V)
           for file in $(find ./downloaded-artifacts -type f -name "*.zip" | sort -V); do
             echo "Uploading $file..."
             gh release upload ${{ env.NEW_TAG }} "$file"
@@ -227,25 +227,23 @@ jobs:
           FILES_LIST=$(find ./downloaded-artifacts -type f -name "*.zip" | xargs -n1 basename | paste -sd ', ' -)
           BUILD_DATE=$(TZ=Asia/Bangkok date "+%Y-%m-%d %H:%M:%S")
           KERNEL_VARIANT="${{ inputs.kernelsu_variant }}"
-          MESSAGE="🌽 *New Kernel Release Uploaded*\n📦 *Repository:* [${{ github.repository }}](https://github.com/${{ github.repository }})\n✏️ *Commit:* [${{ github.sha }}](https://github.c[...]
+          MESSAGE="🌽 *New Kernel Release Uploaded*\n📦 *Repository:* [${{ github.repository }}](https://github.com/${{ github.repository }})\n✏️ *Commit:* [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})\n🗂 *Files:* $FILES_LIST\n🗓 *Build Date:* $BUILD_DATE\n🔸 *KernelSU Variant:* $KERNEL_VARIANT\n\n$RELEASE_BODY"
           curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
             -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
             -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
             -F text="$MESSAGE" \
             -F parse_mode="Markdown"
 
-          for zipfile in $(find ./downloaded-artifacts -type f -name "*.zip"); do
+          # Upload zip kernel satu per satu, urut versi kernel
+          for zipfile in $(find ./downloaded-artifacts -type f -name "*.zip" | sort -V); do
             if [ -f "$zipfile" ]; then
               KERNEL_VERSION=$(basename "$zipfile" | grep -oP '\d+\.\d+\.\d+')
+              CAPTION="File Kernel Zip: $(basename "$zipfile")\n*Date:* $BUILD_DATE\n*KernelSU Variant:* $KERNEL_VARIANT\n*Kernel Version:* $KERNEL_VERSION\n*This Kernel GKI!*"
               curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
                 -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
                 -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
                 -F document=@"$zipfile" \
-                -F caption="File Kernel Zip: $(basename "$zipfile")
-          *Date:* $BUILD_DATE
-          *KernelSU Variant:* $KERNEL_VARIANT
-          *Kernel Version:* $KERNEL_VERSION
-          *This Kernel GKI!*" \
+                -F caption="$CAPTION" \
                 -F parse_mode="Markdown"
             fi
           done
