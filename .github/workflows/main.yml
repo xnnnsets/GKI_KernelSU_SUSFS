@@ -248,14 +248,14 @@ jobs:
             if [ -f "$zipfile" ]; then
               KERNEL_VERSION=$(basename "$zipfile" | grep -oP '\d+\.\d+\.\d+')
               CAPTION=$(cat <<EOF
-File Kernel Zip: $(basename "$zipfile")
-*Date:* $BUILD_DATE
-*KernelSU Variant:* $KERNEL_VARIANT
-*Kernel Version:* $KERNEL_VERSION
-*This Kernel GKI!*
-*For a34x Method odin at Pinned Msg*
-EOF
-)
+              File Kernel Zip: $(basename "$zipfile")
+              *Date:* $BUILD_DATE
+              *KernelSU Variant:* $KERNEL_VARIANT
+              *Kernel Version:* $KERNEL_VERSION
+              *This Kernel GKI!*
+              *For a34x Method odin at Pinned Msg*
+              EOF
+              )
 
               curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
                 -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
