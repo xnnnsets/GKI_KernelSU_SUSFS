@@ -227,7 +227,13 @@ jobs:
           FILES_LIST=$(find ./downloaded-artifacts -type f -name "*.zip" | xargs -n1 basename | paste -sd ', ' -)
           BUILD_DATE=$(TZ=Asia/Bangkok date "+%Y-%m-%d %H:%M:%S")
           KERNEL_VARIANT="${{ inputs.kernelsu_variant }}"
-          MESSAGE="🌽 *New Kernel Release Uploaded*\n📦 *Repository:* [${{ github.repository }}](https://github.com/${{ github.repository }})\n✏️ *Commit:* [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})\n🗂 *Files:* $FILES_LIST\n🗓 *Build Date:* $BUILD_DATE\n🔸 *KernelSU Variant:* $KERNEL_VARIANT\n\n$RELEASE_BODY"
+          MESSAGE="🌽 *New Kernel Release Uploaded*
+          📦 *Repository:* [${{ github.repository }}](https://github.com/${{ github.repository }})
+          ✏️ *Commit:* [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+          🗂 *Files:* $FILES_LIST
+          🗓 *Build Date:* $BUILD_DATE
+          🔸 *KernelSU Variant:* $KERNEL_VARIANT
+          $RELEASE_BODY"
           curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
             -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
             -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
@@ -238,7 +244,15 @@ jobs:
           for zipfile in $(find ./downloaded-artifacts -type f -name "*.zip" | sort -V); do
             if [ -f "$zipfile" ]; then
               KERNEL_VERSION=$(basename "$zipfile" | grep -oP '\d+\.\d+\.\d+')
-              CAPTION="File Kernel Zip: $(basename "$zipfile")\n*Date:* $BUILD_DATE\n*KernelSU Variant:* $KERNEL_VARIANT\n*Kernel Version:* $KERNEL_VERSION\n*This Kernel GKI!*"
+              CAPTION=$(cat <<EOF
+File Kernel Zip: $(basename "$zipfile")
+*Date:* $BUILD_DATE
+*KernelSU Variant:* $KERNEL_VARIANT
+*Kernel Version:* $KERNEL_VERSION
+*This Kernel GKI!*
+*For a34x Method odin at Pinned Msg*
+EOF
+)
               curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
                 -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
                 -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
