@@ -222,29 +222,32 @@ jobs:
           find ./downloaded-artifacts -type f
             
       - name: Send Telegram Notification
-        run: |
-          RELEASE_BODY=$(cat release_body.md)
-          FILES_LIST=$(find ./downloaded-artifacts -type f -name "*.zip" | xargs -n1 basename | paste -sd ', ' -)
-          BUILD_DATE=$(TZ=Asia/Bangkok date "+%Y-%m-%d %H:%M:%S")
-          KERNEL_VARIANT="${{ inputs.kernelsu_variant }}"
-          MESSAGE="🌽 *New Kernel Release Uploaded*
-          📦 *Repository:* [${{ github.repository }}](https://github.com/${{ github.repository }})
-          ✏️ *Commit:* [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
-          🗂 *Files:* $FILES_LIST
-          🗓 *Build Date:* $BUILD_DATE
-          🔸 *KernelSU Variant:* $KERNEL_VARIANT
-          $RELEASE_BODY"
-          curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-            -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-            -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
-            -F text="$MESSAGE" \
-            -F parse_mode="Markdown"
+  run: |
+    RELEASE_BODY=$(cat release_body.md)
+    FILES_LIST=$(find ./downloaded-artifacts -type f -name "*.zip" | xargs -n1 basename | paste -sd ', ' -)
+    BUILD_DATE=$(TZ=Asia/Bangkok date "+%Y-%m-%d %H:%M:%S")
+    KERNEL_VARIANT="${{ inputs.kernelsu_variant }}"
 
-          # Upload zip kernel satu per satu, urut versi kernel
-          for zipfile in $(find ./downloaded-artifacts -type f -name "*.zip" | sort -V); do
-            if [ -f "$zipfile" ]; then
-              KERNEL_VERSION=$(basename "$zipfile" | grep -oP '\d+\.\d+\.\d+')
-              CAPTION=$(cat <<EOF
+    read -r -d '' MESSAGE <<EOF
+🌽 *New Kernel Release Uploaded*
+📦 *Repository:* [${{ github.repository }}](https://github.com/${{ github.repository }})
+✏️ *Commit:* [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})
+🗂 *Files:* $FILES_LIST
+🗓 *Build Date:* $BUILD_DATE
+🔸 *KernelSU Variant:* $KERNEL_VARIANT
+$RELEASE_BODY
+EOF
+
+    curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+      -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+      -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
+      -F parse_mode="Markdown" \
+      --data-urlencode "text=$MESSAGE"
+
+    for zipfile in $(find ./downloaded-artifacts -type f -name "*.zip" | sort -V); do
+      if [ -f "$zipfile" ]; then
+        KERNEL_VERSION=$(basename "$zipfile" | grep -oP '\d+\.\d+\.\d+')
+        CAPTION=$(cat <<EOF
 File Kernel Zip: $(basename "$zipfile")
 *Date:* $BUILD_DATE
 *KernelSU Variant:* $KERNEL_VARIANT
@@ -253,11 +256,12 @@ File Kernel Zip: $(basename "$zipfile")
 *For a34x Method odin at Pinned Msg*
 EOF
 )
-              curl -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
-                -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
-                -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
-                -F document=@"$zipfile" \
-                -F caption="$CAPTION" \
-                -F parse_mode="Markdown"
-            fi
-          done
+
+        curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+          -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+          -F message_thread_id="${{ secrets.TELEGRAM_TOPIC_ID_GKI }}" \
+          -F document=@"$zipfile" \
+          -F parse_mode="Markdown" \
+          --data-urlencode "caption=$CAPTION"
+      fi
+    done
