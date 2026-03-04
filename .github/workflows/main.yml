@@ -55,372 +55,112 @@ jobs:
   build-a12-5-10:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a12-5-10' }}
     needs: download-dependencies
-    strategy:
-      fail-fast: false
-      matrix:
-        kernel_version:
-          - "5.10.43-android12-2021-08"
-          - "5.10.43-android12-2021-09"
-          - "5.10.43-android12-2021-10"
-          - "5.10.66-android12-2021-11"
-          - "5.10.66-android12-2021-12"
-          - "5.10.66-android12-2022-01"
-          - "5.10.81-android12-2022-02"
-          - "5.10.81-android12-2022-03"
-          - "5.10.101-android12-2022-04"
-          - "5.10.101-android12-2022-05"
-          - "5.10.110-android12-2022-06"
-          - "5.10.110-android12-2022-07"
-          - "5.10.117-android12-2022-08"
-          - "5.10.117-android12-2022-09"
-          - "5.10.136-android12-2022-10"
-          - "5.10.136-android12-2022-11"
-          - "5.10.149-android12-2022-12"
-          - "5.10.149-android12-2023-01"
-          - "5.10.160-android12-2023-02"
-          - "5.10.160-android12-2023-03"
-          - "5.10.168-android12-2023-04"
-          - "5.10.168-android12-2023-05"
-          - "5.10.177-android12-2023-06"
-          - "5.10.177-android12-2023-07"
-          - "5.10.185-android12-2023-09"
-          - "5.10.198-android12-2023-11"
-          - "5.10.198-android12-2024-01"
-          - "5.10.205-android12-2024-03"
-          - "5.10.209-android12-2024-05"
-          - "5.10.218-android12-2024-08"
-          - "5.10.226-android12-2024-11"
-          - "5.10.233-android12-2025-02"
-          - "5.10.236-android12-2025-05"
-          - "5.10.237-android12-2025-06"
-          - "5.10.240-android12-2025-09"
-          - "5.10.246-android12-2025-12"
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/prepare.yml
     with:
-      kernel_version: ${{ matrix.kernel_version }}
+      config_file: .github/kernel-config/a12-5.10.json
       ksu_commit: ${{ inputs.ksu_commit || '' }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
+    secrets: inherit
 
   build-a13-5-10:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a13-5-10' }}
     needs: download-dependencies
-    strategy:
-      fail-fast: false
-      matrix:
-        kernel_version:
-          - "5.10.107-android13-2022-04"
-          - "5.10.107-android13-2022-05"
-          - "5.10.107-android13-2022-06"
-          - "5.10.107-android13-2022-07"
-          - "5.10.107-android13-2022-08"
-          - "5.10.107-android13-2022-09"
-          - "5.10.107-android13-2022-10"
-          - "5.10.107-android13-2022-11"
-          - "5.10.149-android13-2022-12"
-          - "5.10.149-android13-2023-01"
-          - "5.10.157-android13-2023-02"
-          - "5.10.157-android13-2023-03"
-          - "5.10.168-android13-2023-04"
-          - "5.10.168-android13-2023-05"
-          - "5.10.177-android13-2023-06"
-          - "5.10.177-android13-2023-07"
-          - "5.10.186-android13-2023-08"
-          - "5.10.186-android13-2023-09"
-          - "5.10.189-android13-2023-10"
-          - "5.10.189-android13-2023-11"
-          - "5.10.198-android13-2023-12"
-          - "5.10.198-android13-2024-01"
-          - "5.10.205-android13-2024-02"
-          - "5.10.205-android13-2024-03"
-          - "5.10.209-android13-2024-04"
-          - "5.10.209-android13-2024-05"
-          - "5.10.210-android13-2024-06"
-          - "5.10.214-android13-2024-07"
-          - "5.10.218-android13-2024-08"
-          - "5.10.223-android13-2024-09"
-          - "5.10.223-android13-2024-11"
-          - "5.10.228-android13-2025-01"
-          - "5.10.234-android13-2025-03"
-          - "5.10.236-android13-2025-05"
-          - "5.10.238-android13-2025-07"
-          - "5.10.243-android13-2025-10"
-          - "5.10.246-android13-2026-01"
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/prepare.yml
     with:
-      kernel_version: ${{ matrix.kernel_version }}
+      config_file: .github/kernel-config/a13-5.10.json
       ksu_commit: ${{ inputs.ksu_commit || '' }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
+    secrets: inherit
 
   build-a13-5-15:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a13-5-15' }}
     needs: download-dependencies
-    strategy:
-      fail-fast: false
-      matrix:
-        kernel_version:
-          - "5.15.41-android13-2022-06"
-          - "5.15.41-android13-2022-07"
-          - "5.15.41-android13-2022-08"
-          - "5.15.41-android13-2022-09"
-          - "5.15.41-android13-2022-10"
-          - "5.15.41-android13-2022-11"
-          - "5.15.74-android13-2022-12"
-          - "5.15.74-android13-2023-01"
-          - "5.15.78-android13-2023-02"
-          - "5.15.78-android13-2023-03"
-          - "5.15.94-android13-2023-04"
-          - "5.15.94-android13-2023-05"
-          - "5.15.104-android13-2023-06"
-          - "5.15.104-android13-2023-07"
-          - "5.15.119-android13-2023-08"
-          - "5.15.119-android13-2023-09"
-          - "5.15.123-android13-2023-10"
-          - "5.15.123-android13-2023-11"
-          - "5.15.137-android13-2023-12"
-          - "5.15.137-android13-2024-01"
-          - "5.15.144-android13-2024-02"
-          - "5.15.144-android13-2024-03"
-          - "5.15.148-android13-2024-04"
-          - "5.15.148-android13-2024-05"
-          - "5.15.149-android13-2024-06"
-          - "5.15.149-android13-2024-07"
-          - "5.15.151-android13-2024-08"
-          - "5.15.153-android13-2024-09"
-          - "5.15.167-android13-2024-11"
-          - "5.15.170-android13-2025-01"
-          - "5.15.178-android13-2025-03"
-          - "5.15.180-android13-2025-05"
-          - "5.15.185-android13-2025-07"
-          - "5.15.189-android13-2025-09"
-          - "5.15.194-android13-2025-12"
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/prepare.yml
     with:
-      kernel_version: ${{ matrix.kernel_version }}
+      config_file: .github/kernel-config/a13-5.15.json
       ksu_commit: ${{ inputs.ksu_commit || '' }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
+    secrets: inherit
 
   build-a14-5-15:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a14-5-15' }}
     needs: download-dependencies
-    strategy:
-      fail-fast: false
-      matrix:
-        kernel_version:
-          - "5.15.110-android14-2023-06"
-          - "5.15.110-android14-2023-08"
-          - "5.15.110-android14-2023-09"
-          - "5.15.131-android14-2023-11"
-          - "5.15.137-android14-2024-01"
-          - "5.15.144-android14-2024-02"
-          - "5.15.144-android14-2024-03"
-          - "5.15.148-android14-2024-04"
-          - "5.15.148-android14-2024-05"
-          - "5.15.149-android14-2024-06"
-          - "5.15.153-android14-2024-07"
-          - "5.15.158-android14-2024-08"
-          - "5.15.164-android14-2024-09"
-          - "5.15.167-android14-2024-11"
-          - "5.15.170-android14-2025-01"
-          - "5.15.178-android14-2025-03"
-          - "5.15.180-android14-2025-05"
-          - "5.15.185-android14-2025-07"
-          - "5.15.192-android14-2025-10"
-          - "5.15.196-android14-2026-01"
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/prepare.yml
     with:
-      kernel_version: ${{ matrix.kernel_version }}
+      config_file: .github/kernel-config/a14-5.15.json
       ksu_commit: ${{ inputs.ksu_commit || '' }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
+    secrets: inherit
 
   build-a14-6-1:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a14-6-1' }}
     needs: download-dependencies
-    strategy:
-      fail-fast: false
-      matrix:
-        kernel_version:
-          - "6.1.25-android14-2023-06"
-          - "6.1.25-android14-2023-07"
-          - "6.1.25-android14-2023-08"
-          - "6.1.25-android14-2023-09"
-          - "6.1.25-android14-2023-10"
-          - "6.1.43-android14-2023-11"
-          - "6.1.57-android14-2023-12"
-          - "6.1.57-android14-2024-01"
-          - "6.1.68-android14-2024-02"
-          - "6.1.68-android14-2024-03"
-          - "6.1.75-android14-2024-04"
-          - "6.1.75-android14-2024-05"
-          - "6.1.78-android14-2024-06"
-          - "6.1.84-android14-2024-07"
-          - "6.1.90-android14-2024-08"
-          - "6.1.93-android14-2024-09"
-          - "6.1.99-android14-2024-10"
-          - "6.1.112-android14-2024-11"
-          - "6.1.115-android14-2024-12"
-          - "6.1.118-android14-2025-01"
-          - "6.1.124-android14-2025-02"
-          - "6.1.128-android14-2025-03"
-          - "6.1.129-android14-2025-04"
-          - "6.1.134-android14-2025-05"
-          - "6.1.138-android14-2025-06"
-          - "6.1.141-android14-2025-07"
-          - "6.1.145-android14-2025-08"
-          - "6.1.145-android14-2025-09"
-          - "6.1.157-android14-2025-12"
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/prepare.yml
     with:
-      kernel_version: ${{ matrix.kernel_version }}
+      config_file: .github/kernel-config/a14-6.1.json
       ksu_commit: ${{ inputs.ksu_commit || '' }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
+    secrets: inherit
 
   build-a15-6-6:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a15-6-6' }}
     needs: download-dependencies
-    strategy:
-      fail-fast: false
-      matrix:
-        kernel_version:
-          - "6.6.30-android15-2024-07"
-          - "6.6.30-android15-2024-08"
-          - "6.6.46-android15-2024-09"
-          - "6.6.50-android15-2024-10"
-          - "6.6.56-android15-2024-11"
-          - "6.6.57-android15-2024-12"
-          - "6.6.58-android15-2025-01"
-          - "6.6.66-android15-2025-02"
-          - "6.6.77-android15-2025-03"
-          - "6.6.82-android15-2025-04"
-          - "6.6.87-android15-2025-05"
-          - "6.6.89-android15-2025-06"
-          - "6.6.92-android15-2025-07"
-          - "6.6.98-android15-2025-08"
-          - "6.6.98-android15-2025-09"
-          - "6.6.102-android15-2025-10"
-          - "6.6.118-android15-2026-01"
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/prepare.yml
     with:
-      kernel_version: ${{ matrix.kernel_version }}
+      config_file: .github/kernel-config/a15-6.6.json
       ksu_commit: ${{ inputs.ksu_commit || '' }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
+    secrets: inherit
 
   build-a16-6-12:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a16-6-12' }}
     needs: download-dependencies
-    strategy:
-      fail-fast: false
-      matrix:
-        kernel_version:
-          - "6.12.23-android16-2025-05-exp"
-          - "6.12.23-android16-2025-06"
-          - "6.12.30-android16-2025-07"
-          - "6.12.38-android16-2025-08"
-          - "6.12.38-android16-2025-09"
-          - "6.12.58-android16-2025-12"
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/prepare.yml
     with:
-      kernel_version: ${{ matrix.kernel_version }}
+      config_file: .github/kernel-config/a16-6.12.json
       ksu_commit: ${{ inputs.ksu_commit || '' }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
-  
+    secrets: inherit
+
   build-lts:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'lts' || github.event_name == 'push' }}
     needs: download-dependencies
-    strategy:
-      fail-fast: false
-      matrix:
-        kernel_version:
-          - "5.10.X-android12-lts"
-          - "5.10.X-android13-lts"
-          - "5.15.X-android13-lts"
-          - "5.15.X-android14-lts"
-          - "6.1.X-android14-lts"
-          - "6.6.X-android15-lts"
-          - "6.12.X-android16-lts"
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/prepare.yml
     with:
-      kernel_version: ${{ matrix.kernel_version }}
+      config_file: .github/kernel-config/lts.json
       ksu_commit: ${{ inputs.ksu_commit || '' }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
+    secrets: inherit
 
   build-custom:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'custom' }}
     needs: download-dependencies
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - kernel_version: "5.10.226-android12-2024-11"
-            variant: "vTomsonek"
-          - kernel_version: "6.1.145-android14-2025-09"
-            variant: "TheWildJames"
-          - kernel_version: "6.1.157-android14-2025-12"
-            variant: "MarionKernel"
-          - kernel_version: "6.1.128-android14-2025-03"
-            variant: "Hakan"
-          - kernel_version: "5.10.226-android12-2024-11"
-            variant: "Neyugn"
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/prepare.yml
     with:
-      kernel_version: ${{ matrix.kernel_version }}
-      variant: ${{ matrix.variant }}
+      config_file: .github/kernel-config/custom.json
       ksu_commit: ${{ inputs.ksu_commit || '' }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
+    secrets: inherit
 
   build-testing:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'testing' || github.event_name == 'push' }}
     needs: download-dependencies
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - kernel_version: "6.1.145-android14-2025-08"
-            variant: "Placeholder"
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/prepare.yml
     with:
-      kernel_version: ${{ matrix.kernel_version }}
-      variant: ${{ matrix.variant }}
+      config_file: .github/kernel-config/testing.json
       ksu_commit: ${{ inputs.ksu_commit || '' }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
+    secrets: inherit
 
   build-bypass:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'bypass' }}
     needs: download-dependencies
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - kernel_version: "5.10.X-android12-lts"
-            variant: "Bypass"
-          - kernel_version: "5.10.X-android13-lts"
-            variant: "Bypass"
-          - kernel_version: "5.15.X-android13-lts"
-            variant: "Bypass"
-          - kernel_version: "5.15.X-android14-lts"
-            variant: "Bypass"
-          - kernel_version: "6.1.X-android14-lts"
-            variant: "Bypass"
-          - kernel_version: "6.6.X-android15-lts"
-            variant: "Bypass"
-          - kernel_version: "6.12.X-android16-lts"
-            variant: "Bypass"
-    uses: ./.github/workflows/build.yml
-    secrets: inherit
+    uses: ./.github/workflows/prepare.yml
     with:
-      kernel_version: ${{ matrix.kernel_version }}
-      variant: ${{ matrix.variant }}
+      config_file: .github/kernel-config/bypass.json
       ksu_commit: ${{ inputs.ksu_commit || '' }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
+    secrets: inherit
 
   rej:
     if: always()
@@ -442,10 +182,11 @@ jobs:
     - build-bypass
     steps:
     - name: Download Misc Artifacts
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v4
       with:
         path: ./downloaded-artifacts
         pattern: '*-Rejects'
+        merge-multiple: false
 
     - name: Process Reject Artifacts
       run: |
@@ -457,7 +198,7 @@ jobs:
             [ -d "$dir" ] || continue
             
             dirname=$(basename "$dir")
-          # Process each reject artifact
+            # Process each reject artifact
             
             # Get original name (remove -Rejects suffix)
             original_name=${dirname%-Rejects}
@@ -596,129 +337,28 @@ jobs:
     - name: Set release body
       run: |
         cat << 'EOF' > release_body.md
-
-        !!THIS RELEASE IS A TESTING RELEASE!!
-
-        **IMPORTANT DISCLAIMER**
-        This software is provided for testing and educational purposes only. Use at your own risk.
-        The developers are not responsible for any damage, data loss, or issues that may occur.
-        Please ensure you have proper backups before installation.
-
-        🔹 Normal 
-        - Default kernel configuration 
-        - Standard kernel module loading behavior 
-        - Recommended for most users 
-
-        🔹 Bypass 
-        - Includes module check bypass modifications 
-        - What are kernel modules? Kernel modules are pieces of code that can be loaded into the kernel at runtime to extend functionality (like device drivers, filesystem support, etc.). These are different from KernelSU/Magisk modules. 
-        - The Problem: Sometimes when installing a custom kernel, the device tries to load a kernel module that fails due to version mismatches, missing dependencies, or signature verification issues. This can cause boot failures or device instability. 
-        - The Solution: This version changes one line from false to true to force load the kernel module, bypassing the failure check that would normally prevent loading.
-
-        ⚠️ **IMPORTANT: If you are using a Bypass kernel, please create a GitHub issue!**
-        We are now building Bypass kernels on-demand to reduce build time and clutter. If you need a Bypass kernel for your device, please:
-        1. Create a GitHub issue using the "Bypass Kernel Report" template
-        2. Include: kernel version, device model, Android version, and any issues/observations
-        3. Message me on Telegram after creating the issue
-        I will prioritize and release a new Bypass build ASAP based on your feedback. This helps us understand which devices need Bypass kernels and build only what's needed!
-
-        Features:
-        -> Wild KSU Manager Support
-        -> SUSFS ඞ v2.0.0
-        -> SUSFS Inline Hooks
-        -> Ptrace Patch Support for Older Kernels (<5.16) (Disabled for testing)
-        -> IPSet Support for Advanced Network Filtering (Disabled for testing, please msg me if you need it)
-        -> Wireguard Support 
-        -> BBR v1 Support (Disabled for testing, please msg me if you need it)
-        -> BBG: https://github.com/vc-teahouse/Baseband-guard (Disabled for testing, will be enabled in the future)
-
-        🔹 BBG (Baseband-guard)
-        - A lightweight LSM (Linux Security Module) for Android kernel
-        - Blocks unauthorized writes to critical partitions/device nodes
-        - Prevents malicious tampering with baseband and boot chain
-        - Kernel-level protection via LSM hooks
-        - Reduces risk of soft-brick/hard-brick issues
-
-        Kernel Flasher:
-        -> https://github.com/fatalcoder524/KernelFlasher/
-
-        Manager:
-        -> Wild KSU Manager: https://github.com/WildKernels/Wild_KSU
-
-        Module: 
-        -> https://github.com/sidex15/ksu_module_susfs
-
-        !!THIS RELEASE IS A TESTING RELEASE!!
+        **Automated Release**
+        
+        This release was automatically generated by GitHub Actions.
+        
+        **Builds:**
         EOF
-
-    - name: Create GitHub Release
-      run: |
-        PRERELEASE_FLAG=""
-        if [ "${{ inputs.release_type }}" == "Pre-Release" ]; then
-          PRERELEASE_FLAG="--prerelease"
+        
+        # Add details about included builds
+        if [[ "${{ inputs.kernel_build_version }}" == "all" ]]; then
+          echo "- All Kernel Versions" >> release_body.md
+        else
+          echo "- ${{ inputs.kernel_build_version }}" >> release_body.md
         fi
 
-        # Create GitHub release
-        gh release create "$NEW_TAG" \
-          --title "$RELEASE_NAME" \
-          --notes-file release_body.md \
-          --target "${{ github.sha }}" \
-          $PRERELEASE_FLAG
-
-    - name: Download Artifacts
-      uses: actions/download-artifact@v5
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
       with:
-        path: ./downloaded-artifacts
-        pattern: '*-AnyKernel3'
-
-    - name: Upload Release Assets
-      run: |+
-        shopt -s nullglob
-        mapfile -t anykernel_dirs < <(find ./downloaded-artifacts -maxdepth 2 -type d -name '*-AnyKernel3' -print)
-
-        for dir in "${anykernel_dirs[@]}"; do
-          artifact_name=$(basename "$dir")
-          # Create zip for each artifact
-          (cd "$dir" && zip -r -q -9 "$GITHUB_WORKSPACE/${artifact_name}.zip" ./*) &
-        done
-        wait
-
-        for dir in "${anykernel_dirs[@]}"; do
-          artifact_name=$(basename "$dir")
-          # Upload release asset
-          gh release upload "$NEW_TAG" "$GITHUB_WORKSPACE/${artifact_name}.zip" --clobber
-        done
-
-  notify:
-    runs-on: ubuntu-latest
-    needs: release
-    if: ${{ always() && (inputs.release_type == 'Actions' || needs.release.result == 'success') }}
-    permissions:
-      contents: read
-      actions: read
-    steps:
-      - name: Free Disk Space
-        uses: endersonmenezes/free-disk-space@v3
-        with:
-          remove_android: true
-          remove_dotnet: true
-          remove_haskell: true
-          remove_tool_cache: true
-          remove_swap: true
-          remove_packages: "azure-cli google-cloud-cli microsoft-edge-stable google-chrome-stable firefox postgresql* temurin-* *llvm* mysql* dotnet-sdk-*"
-          remove_packages_one_command: true
-          remove_folders: "/usr/share/swift /usr/share/miniconda /usr/share/az* /usr/local/lib/node_modules /usr/local/share/chromium /usr/local/share/powershell /usr/local/julia /usr/local/aws-cli /usr/local/aws-sam-cli /usr/share/gradle"
-          rm_cmd: "rmz"
-          rmz_version: "3.1.1"
-          testing: false
-
-      - name: Send Telegram Notification
-        uses: ./.github/actions/telegram-notify
-        with:
-          release_type: ${{ inputs.release_type }}
-          new_tag: ${{ needs.release.outputs.new_tag }}
-          release_result: ${{ needs.release.result }}
-          telegram_bot_token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          telegram_chat_id: ${{ secrets.TELEGRAM_CHAT_ID }}
-          telegram_topic_id: ${{ secrets.TELEGRAM_TOPIC_ID_GKI }}
-          telegram_user_id: ${{ secrets.TELEGRAM_USER_ID }}
+        tag_name: ${{ steps.tag.outputs.new_tag }}
+        name: ${{ steps.tag.outputs.new_tag }}
+        body_path: release_body.md
+        draft: false
+        prerelease: ${{ inputs.release_type == 'Pre-Release' }}
+        files: |
+          AnyKernel3/**/*.zip
+          AIO-REJ.zip
