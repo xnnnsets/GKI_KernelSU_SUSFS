@@ -227,6 +227,7 @@ jobs:
         os_patch_level: ${{ steps.parse.outputs.os_patch_level }}
 
     - name: Apply ABI Compare Bypass
+      if: false
       working-directory: ${{ github.workspace }}/kernel
       run: |
         # ABI compare bypass per kernel/android version
