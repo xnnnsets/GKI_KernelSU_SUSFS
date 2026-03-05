@@ -9,7 +9,7 @@ runs:
       working-directory: ${{ github.workspace }}/kernel
       run: |
         mv "$GITHUB_WORKSPACE/Wild_KSU" ./
-        ./Wild_KSU/setup.sh
+        ./Wild_KSU/kernel/setup.sh
 
     - name: Enable KernelSU Config
       shell: bash
