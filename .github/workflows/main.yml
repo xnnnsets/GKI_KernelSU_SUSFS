@@ -12,11 +12,6 @@ on:
         type: choice
         options: [ Actions, Pre-Release, Release ]
         default: Actions
-      ksu_commit:
-        description: "KSU Commit (optional)"
-        type: string
-        default: ""
-        required: false
       kernel_build_version:
         description: "Kernel Version to Build"
         type: choice
@@ -44,121 +39,172 @@ on:
           - BBG
           - None
         default: WKSU+SUSFS+BBG
+      ksu_commit:
+        description: "KSU Commit (optional)"
+        type: string
+        default: ""
+        required: false
   push:
     branches:
       - main
 
 jobs:
-  download-dependencies:
-    uses: ./.github/workflows/dependencies.yml
+  fetch-latest-commits:
+    runs-on: ubuntu-latest
+    outputs:
+      ksu_commit: ${{ steps.fetch.outputs.ksu_commit }}
+      anykernel_commit: ${{ steps.fetch.outputs.anykernel_commit }}
+      patches_commit: ${{ steps.fetch.outputs.patches_commit }}
+      susfs_commit: ${{ steps.fetch.outputs.susfs_commit }}
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Fetch Commits
+        id: fetch
+        uses: ./.github/actions/fetch-commits
+        with:
+          ksu_commit: ${{ inputs.ksu_commit }}
 
   build-a12-5-10:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a12-5-10' }}
-    needs: download-dependencies
+    needs: fetch-latest-commits
     uses: ./.github/workflows/prepare.yml
     with:
       config_file: .github/kernel-config/a12-5.10.json
-      ksu_commit: ${{ inputs.ksu_commit || '' }}
+      ksu_commit: ${{ inputs.ksu_commit || needs.fetch-latest-commits.outputs.ksu_commit }}
+      anykernel_commit: ${{ needs.fetch-latest-commits.outputs.anykernel_commit }}
+      patches_commit: ${{ needs.fetch-latest-commits.outputs.patches_commit }}
+      susfs_commit: ${{ needs.fetch-latest-commits.outputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
     secrets: inherit
 
   build-a13-5-10:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a13-5-10' }}
-    needs: download-dependencies
+    needs: fetch-latest-commits
     uses: ./.github/workflows/prepare.yml
     with:
       config_file: .github/kernel-config/a13-5.10.json
-      ksu_commit: ${{ inputs.ksu_commit || '' }}
+      ksu_commit: ${{ inputs.ksu_commit || needs.fetch-latest-commits.outputs.ksu_commit }}
+      anykernel_commit: ${{ needs.fetch-latest-commits.outputs.anykernel_commit }}
+      patches_commit: ${{ needs.fetch-latest-commits.outputs.patches_commit }}
+      susfs_commit: ${{ needs.fetch-latest-commits.outputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
     secrets: inherit
 
   build-a13-5-15:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a13-5-15' }}
-    needs: download-dependencies
+    needs: fetch-latest-commits
     uses: ./.github/workflows/prepare.yml
     with:
       config_file: .github/kernel-config/a13-5.15.json
-      ksu_commit: ${{ inputs.ksu_commit || '' }}
+      ksu_commit: ${{ inputs.ksu_commit || needs.fetch-latest-commits.outputs.ksu_commit }}
+      anykernel_commit: ${{ needs.fetch-latest-commits.outputs.anykernel_commit }}
+      patches_commit: ${{ needs.fetch-latest-commits.outputs.patches_commit }}
+      susfs_commit: ${{ needs.fetch-latest-commits.outputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
     secrets: inherit
 
   build-a14-5-15:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a14-5-15' }}
-    needs: download-dependencies
+    needs: fetch-latest-commits
     uses: ./.github/workflows/prepare.yml
     with:
       config_file: .github/kernel-config/a14-5.15.json
-      ksu_commit: ${{ inputs.ksu_commit || '' }}
+      ksu_commit: ${{ inputs.ksu_commit || needs.fetch-latest-commits.outputs.ksu_commit }}
+      anykernel_commit: ${{ needs.fetch-latest-commits.outputs.anykernel_commit }}
+      patches_commit: ${{ needs.fetch-latest-commits.outputs.patches_commit }}
+      susfs_commit: ${{ needs.fetch-latest-commits.outputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
     secrets: inherit
 
   build-a14-6-1:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a14-6-1' }}
-    needs: download-dependencies
+    needs: fetch-latest-commits
     uses: ./.github/workflows/prepare.yml
     with:
       config_file: .github/kernel-config/a14-6.1.json
-      ksu_commit: ${{ inputs.ksu_commit || '' }}
+      ksu_commit: ${{ inputs.ksu_commit || needs.fetch-latest-commits.outputs.ksu_commit }}
+      anykernel_commit: ${{ needs.fetch-latest-commits.outputs.anykernel_commit }}
+      patches_commit: ${{ needs.fetch-latest-commits.outputs.patches_commit }}
+      susfs_commit: ${{ needs.fetch-latest-commits.outputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
     secrets: inherit
 
   build-a15-6-6:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a15-6-6' }}
-    needs: download-dependencies
+    needs: fetch-latest-commits
     uses: ./.github/workflows/prepare.yml
     with:
       config_file: .github/kernel-config/a15-6.6.json
-      ksu_commit: ${{ inputs.ksu_commit || '' }}
+      ksu_commit: ${{ inputs.ksu_commit || needs.fetch-latest-commits.outputs.ksu_commit }}
+      anykernel_commit: ${{ needs.fetch-latest-commits.outputs.anykernel_commit }}
+      patches_commit: ${{ needs.fetch-latest-commits.outputs.patches_commit }}
+      susfs_commit: ${{ needs.fetch-latest-commits.outputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
     secrets: inherit
 
   build-a16-6-12:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'a16-6-12' }}
-    needs: download-dependencies
+    needs: fetch-latest-commits
     uses: ./.github/workflows/prepare.yml
     with:
       config_file: .github/kernel-config/a16-6.12.json
-      ksu_commit: ${{ inputs.ksu_commit || '' }}
+      ksu_commit: ${{ inputs.ksu_commit || needs.fetch-latest-commits.outputs.ksu_commit }}
+      anykernel_commit: ${{ needs.fetch-latest-commits.outputs.anykernel_commit }}
+      patches_commit: ${{ needs.fetch-latest-commits.outputs.patches_commit }}
+      susfs_commit: ${{ needs.fetch-latest-commits.outputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
     secrets: inherit
 
   build-lts:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'lts' || github.event_name == 'push' }}
-    needs: download-dependencies
+    needs: fetch-latest-commits
     uses: ./.github/workflows/prepare.yml
     with:
       config_file: .github/kernel-config/lts.json
-      ksu_commit: ${{ inputs.ksu_commit || '' }}
+      ksu_commit: ${{ inputs.ksu_commit || needs.fetch-latest-commits.outputs.ksu_commit }}
+      anykernel_commit: ${{ needs.fetch-latest-commits.outputs.anykernel_commit }}
+      patches_commit: ${{ needs.fetch-latest-commits.outputs.patches_commit }}
+      susfs_commit: ${{ needs.fetch-latest-commits.outputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
     secrets: inherit
 
   build-custom:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'custom' }}
-    needs: download-dependencies
+    needs: fetch-latest-commits
     uses: ./.github/workflows/prepare.yml
     with:
       config_file: .github/kernel-config/custom.json
-      ksu_commit: ${{ inputs.ksu_commit || '' }}
+      ksu_commit: ${{ inputs.ksu_commit || needs.fetch-latest-commits.outputs.ksu_commit }}
+      anykernel_commit: ${{ needs.fetch-latest-commits.outputs.anykernel_commit }}
+      patches_commit: ${{ needs.fetch-latest-commits.outputs.patches_commit }}
+      susfs_commit: ${{ needs.fetch-latest-commits.outputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
     secrets: inherit
 
   build-testing:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'testing' || github.event_name == 'push' }}
-    needs: download-dependencies
+    needs: fetch-latest-commits
     uses: ./.github/workflows/prepare.yml
     with:
       config_file: .github/kernel-config/testing.json
-      ksu_commit: ${{ inputs.ksu_commit || '' }}
+      ksu_commit: ${{ inputs.ksu_commit || needs.fetch-latest-commits.outputs.ksu_commit }}
+      anykernel_commit: ${{ needs.fetch-latest-commits.outputs.anykernel_commit }}
+      patches_commit: ${{ needs.fetch-latest-commits.outputs.patches_commit }}
+      susfs_commit: ${{ needs.fetch-latest-commits.outputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
     secrets: inherit
 
   build-bypass:
     if: ${{ inputs.kernel_build_version == 'all' || inputs.kernel_build_version == 'bypass' }}
-    needs: download-dependencies
+    needs: fetch-latest-commits
     uses: ./.github/workflows/prepare.yml
     with:
       config_file: .github/kernel-config/bypass.json
-      ksu_commit: ${{ inputs.ksu_commit || '' }}
+      ksu_commit: ${{ inputs.ksu_commit || needs.fetch-latest-commits.outputs.ksu_commit }}
+      anykernel_commit: ${{ needs.fetch-latest-commits.outputs.anykernel_commit }}
+      patches_commit: ${{ needs.fetch-latest-commits.outputs.patches_commit }}
+      susfs_commit: ${{ needs.fetch-latest-commits.outputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set || 'WKSU+SUSFS+BBG' }}
     secrets: inherit
 

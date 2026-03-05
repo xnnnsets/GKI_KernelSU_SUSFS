@@ -13,6 +13,9 @@ inputs:
   sublevel:
     description: 'Kernel sublevel'
     required: true
+  susfs_commit:
+    description: 'Commit map (branch:commit,branch:commit...)'
+    required: false
 
 runs:
   using: composite
@@ -21,16 +24,36 @@ runs:
       shell: bash
       run: |
         SUSFS_BRANCH="gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}"
+        SUSFS_REPO="https://gitlab.com/simonpunk/susfs4ksu.git"
         
-        # Use downloaded SUSFS artifact
-        if [ -d "susfs_cache/$SUSFS_BRANCH" ]; then
-          # Use cached SUSFS branch
-          cp -r "susfs_cache/$SUSFS_BRANCH" susfs4ksu
+        echo "Preparing SUSFS for branch: $SUSFS_BRANCH"
+        
+        # Parse commit map to find the commit for this branch
+        COMMIT_MAP="${{ inputs.susfs_commit }}"
+        TARGET_COMMIT=""
+        
+        if [ -n "$COMMIT_MAP" ]; then
+          # Split by comma
+          IFS=',' read -ra ENTRIES <<< "$COMMIT_MAP"
+          for entry in "${ENTRIES[@]}"; do
+            # Split by colon
+            IFS=':' read -r branch commit <<< "$entry"
+            if [ "$branch" == "$SUSFS_BRANCH" ]; then
+              TARGET_COMMIT="$commit"
+              break
+            fi
+          done
+        fi
+        
+        if [ -n "$TARGET_COMMIT" ]; then
+          echo "Found specific commit for $SUSFS_BRANCH: $TARGET_COMMIT"
+          git clone "$SUSFS_REPO" -b "$SUSFS_BRANCH" susfs4ksu
+          cd susfs4ksu
+          git checkout "$TARGET_COMMIT"
+          cd ..
         else
-          echo "ERROR: SUSFS branch $SUSFS_BRANCH not found in downloaded artifacts"
-          echo "Available branches:"
-          ls -d susfs_cache/* 2>/dev/null || echo "No branches found"
-          exit 1
+          echo "No specific commit found for $SUSFS_BRANCH, cloning latest..."
+          git clone "$SUSFS_REPO" -b "$SUSFS_BRANCH" --depth=1 susfs4ksu
         fi
         
         SUSFS_VERSION="2.0.0"

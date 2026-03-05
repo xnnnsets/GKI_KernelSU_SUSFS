@@ -1,5 +1,10 @@
 name: Setup Wild KSU
 description: Download and configure Wild KSU with version tracking
+inputs:
+  ksu_commit:
+    description: "KSU Commit"
+    required: true
+    type: string
 
 runs:
   using: composite
@@ -8,9 +13,7 @@ runs:
       shell: bash
       working-directory: ${{ github.workspace }}/kernel
       run: |
-        mv "$GITHUB_WORKSPACE/Wild_KSU" ./
-        chmod +x ./Wild_KSU/kernel/setup.sh
-        ./Wild_KSU/kernel/setup.sh
+        curl -LSs "https://raw.githubusercontent.com/WildKernels/Wild_KSU/stable/kernel/setup.sh" | bash -s ${{ inputs.ksu_commit }}
 
     - name: Enable KernelSU Config
       shell: bash

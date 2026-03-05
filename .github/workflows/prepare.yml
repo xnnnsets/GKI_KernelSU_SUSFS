@@ -11,6 +11,18 @@ on:
         description: "KSU Commit"
         required: false
         type: string
+      anykernel_commit:
+        description: "AnyKernel3 Commit"
+        required: false
+        type: string
+      patches_commit:
+        description: "Kernel Patches Commit"
+        required: false
+        type: string
+      susfs_commit:
+        description: "SUSFS Commit"
+        required: false
+        type: string
       feature_set:
         description: "Feature Set"
         required: false
@@ -59,5 +71,8 @@ jobs:
       kernel_version: ${{ matrix.kernel_version }}
       variant: ${{ matrix.variant }}
       ksu_commit: ${{ inputs.ksu_commit }}
+      anykernel_commit: ${{ inputs.anykernel_commit }}
+      patches_commit: ${{ inputs.patches_commit }}
+      susfs_commit: ${{ inputs.susfs_commit }}
       feature_set: ${{ inputs.feature_set }}
     secrets: inherit

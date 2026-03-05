@@ -15,6 +15,15 @@ on:
       ksu_commit:
         required: false
         type: string
+      anykernel_commit:
+        required: false
+        type: string
+      patches_commit:
+        required: false
+        type: string
+      susfs_commit:
+        required: false
+        type: string
       feature_set:
         required: true
         type: string
@@ -280,6 +289,19 @@ jobs:
 
     - name: Prepare AnyKernel3 Zip
       run: |
+        # Use specific commit if provided
+        if [ -n "${{ inputs.anykernel_commit }}" ]; then
+          echo "Cloning AnyKernel3 at commit ${{ inputs.anykernel_commit }}"
+          if [ -d "$GITHUB_WORKSPACE/AnyKernel3" ]; then rm -rf "$GITHUB_WORKSPACE/AnyKernel3"; fi
+          git clone https://github.com/WildKernels/AnyKernel3.git "$GITHUB_WORKSPACE/AnyKernel3"
+          cd "$GITHUB_WORKSPACE/AnyKernel3"
+          git checkout "${{ inputs.anykernel_commit }}"
+          cd "$GITHUB_WORKSPACE"
+        elif [ ! -d "$GITHUB_WORKSPACE/AnyKernel3" ]; then
+           # Fallback if not downloaded
+           git clone https://github.com/WildKernels/AnyKernel3.git -b gki-2.0 "$GITHUB_WORKSPACE/AnyKernel3"
+        fi
+
         # Copy Image from normal build locations
         if [ -f "$GITHUB_WORKSPACE/kernel/out/$ANDROID_VERSION-$KERNEL_VERSION/dist/Image" ]; then
           cp "$GITHUB_WORKSPACE/kernel/out/$ANDROID_VERSION-$KERNEL_VERSION/dist/Image" "$GITHUB_WORKSPACE/AnyKernel3/Image"
