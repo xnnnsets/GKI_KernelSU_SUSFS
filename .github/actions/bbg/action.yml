@@ -4,12 +4,11 @@ description: Download and configure Baseband Guard security module
 runs:
   using: composite
   steps:
-    - name: Download Baseband Guard
+    - name: Install Baseband Guard
       shell: bash
       working-directory: ${{ github.workspace }}/kernel
       run: |
-        cp -R "$GITHUB_WORKSPACE/Baseband-guard" ./
-        ./Baseband-guard/setup.sh
+        wget -O- https://github.com/vc-teahouse/Baseband-guard/raw/main/setup.sh | bash
     
     - name: Configure Baseband Guard
       shell: bash
