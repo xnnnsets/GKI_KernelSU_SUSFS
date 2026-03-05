@@ -80,19 +80,38 @@ jobs:
         rmz_version: "3.1.1"  # Required when rm_cmd is 'rmz'
         testing: false
 
-    - name: Download Build Dependencies
-      uses: actions/download-artifact@v4
-      with:
-        name: build-dependencies
-        path: .
-
     - name: Setup Build Environment
       run: |
         mkdir -p "$GITHUB_WORKSPACE/kernel"
-        
-        # Ensure repo tool is executable
+        mkdir -p "$GITHUB_WORKSPACE/git-repo"
+        curl -L https://storage.googleapis.com/git-repo-downloads/repo -o "$GITHUB_WORKSPACE/git-repo/repo"
         chmod +x "$GITHUB_WORKSPACE/git-repo/repo"
         echo "$GITHUB_WORKSPACE/git-repo" >> "$GITHUB_PATH"
+        
+        # Clone patches if commit is provided
+        if [ -n "${{ inputs.patches_commit }}" ]; then
+          echo "Cloning Kernel Patches at commit ${{ inputs.patches_commit }}"
+          if [ -d "$GITHUB_WORKSPACE/kernel_patches" ]; then rm -rf "$GITHUB_WORKSPACE/kernel_patches"; fi
+          git clone https://github.com/WildKernels/kernel_patches.git "$GITHUB_WORKSPACE/kernel_patches"
+          cd "$GITHUB_WORKSPACE/kernel_patches"
+          git checkout "${{ inputs.patches_commit }}"
+          cd "$GITHUB_WORKSPACE"
+        else
+          git clone https://github.com/WildKernels/kernel_patches.git "$GITHUB_WORKSPACE/kernel_patches"
+        fi
+
+        # Use specific commit if provided
+        if [ -n "${{ inputs.anykernel_commit }}" ]; then
+          echo "Cloning AnyKernel3 at commit ${{ inputs.anykernel_commit }}"
+          if [ -d "$GITHUB_WORKSPACE/AnyKernel3" ]; then rm -rf "$GITHUB_WORKSPACE/AnyKernel3"; fi
+          git clone https://github.com/WildKernels/AnyKernel3.git "$GITHUB_WORKSPACE/AnyKernel3"
+          cd "$GITHUB_WORKSPACE/AnyKernel3"
+          git checkout "${{ inputs.anykernel_commit }}"
+          cd "$GITHUB_WORKSPACE"
+        elif [ ! -d "$GITHUB_WORKSPACE/AnyKernel3" ]; then
+           # Fallback if not downloaded
+           git clone https://github.com/WildKernels/AnyKernel3.git -b gki-2.0 "$GITHUB_WORKSPACE/AnyKernel3"
+        fi
 
     - name: Download Kernel Repository
       uses: ./.github/actions/download-kernel
@@ -289,19 +308,6 @@ jobs:
 
     - name: Prepare AnyKernel3 Zip
       run: |
-        # Use specific commit if provided
-        if [ -n "${{ inputs.anykernel_commit }}" ]; then
-          echo "Cloning AnyKernel3 at commit ${{ inputs.anykernel_commit }}"
-          if [ -d "$GITHUB_WORKSPACE/AnyKernel3" ]; then rm -rf "$GITHUB_WORKSPACE/AnyKernel3"; fi
-          git clone https://github.com/WildKernels/AnyKernel3.git "$GITHUB_WORKSPACE/AnyKernel3"
-          cd "$GITHUB_WORKSPACE/AnyKernel3"
-          git checkout "${{ inputs.anykernel_commit }}"
-          cd "$GITHUB_WORKSPACE"
-        elif [ ! -d "$GITHUB_WORKSPACE/AnyKernel3" ]; then
-           # Fallback if not downloaded
-           git clone https://github.com/WildKernels/AnyKernel3.git -b gki-2.0 "$GITHUB_WORKSPACE/AnyKernel3"
-        fi
-
         # Copy Image from normal build locations
         if [ -f "$GITHUB_WORKSPACE/kernel/out/$ANDROID_VERSION-$KERNEL_VERSION/dist/Image" ]; then
           cp "$GITHUB_WORKSPACE/kernel/out/$ANDROID_VERSION-$KERNEL_VERSION/dist/Image" "$GITHUB_WORKSPACE/AnyKernel3/Image"
