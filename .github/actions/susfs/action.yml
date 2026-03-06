@@ -96,12 +96,6 @@ runs:
           patch -p1 < 1_fdinfo.c.patch
         fi
 
-        # lts fdinfo variant
-        if [[ "$SUBLEVEL" -eq 251 ]]; then
-          cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a12-5.10/2_fdinfo.c.patch ./
-          patch -p1 < 2_fdinfo.c.patch
-        fi
-
         if [[ "$SUBLEVEL" -le 43 ]]; then
           cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a12-5.10/base.c.patch ./
           patch -p1 < base.c.patch
