@@ -41,16 +41,32 @@ jobs:
     - name: Parse kernel version
       id: parse
       run: |
-        # Parse from format: 5.10.125-android14-stable
-        # Extract: KERNEL_VERSION=5.10, SUB_LEVEL=125, ANDROID_VERSION=android14, OS_PATCH_LEVEL=stable
+        # Parse version string. 
+        # Format: [KERNEL_VERSION].[SUBLEVEL]-[ANDROID_VERSION]-[PATCH_LEVEL]
+        # Example 1: 5.10.198-android12-2024-01 -> K=5.10, S=198, A=android12, P=2024-01
+        # Example 2: 5.10.X-android12-lts       -> K=5.10, S=X,   A=android12, P=lts
+        
         INPUT_VERSION="${{ inputs.kernel_version }}"
-        KERNEL_BASE="${INPUT_VERSION%%-*}"
-        KERNEL_VERSION="${KERNEL_BASE%.*}"
-        SUB_LEVEL="${KERNEL_BASE##*.}"
-        ANDROID_VERSION="${INPUT_VERSION#*-}"
-        ANDROID_VERSION="${ANDROID_VERSION%%-*}"
-        OS_PATCH_LEVEL="${INPUT_VERSION#*-}"
-        OS_PATCH_LEVEL="${OS_PATCH_LEVEL#*-}"
+        
+        # Split by hyphens
+        IFS='-' read -r KERNEL_PART ANDROID_PART REST <<< "$INPUT_VERSION"
+        
+        # Extract Kernel Version and Sublevel
+        KERNEL_VERSION="${KERNEL_PART%.*}"
+        SUB_LEVEL="${KERNEL_PART##*.}"
+        
+        # Extract Android Version
+        ANDROID_VERSION="$ANDROID_PART"
+        
+        # Everything after the android version is the patch level
+        OS_PATCH_LEVEL="$REST"
+        
+        # Special handling for "X" sublevel (LTS builds)
+        if [[ "$SUB_LEVEL" == "X" ]]; then
+             echo "Detected LTS build with wildcard sublevel"
+        fi
+
+        echo "Parsed: KERNEL=$KERNEL_VERSION, SUB=$SUB_LEVEL, ANDROID=$ANDROID_VERSION, PATCH=$OS_PATCH_LEVEL"
         
         # Set environment variables for subsequent steps and shell scripts
         echo "ANDROID_VERSION=$ANDROID_VERSION" >> "$GITHUB_ENV"
