@@ -195,7 +195,8 @@ jobs:
         android_version: ${{ steps.parse.outputs.android_version }}
         kernel_version: ${{ steps.parse.outputs.kernel_version }}
         os_patch_level: ${{ steps.parse.outputs.os_patch_level }}
-        sublevel: ${{ steps.parse.outputs.sub_level }}
+        sublevel: ${{ steps.extract.outputs.sublevel }}
+        susfs_commit: ${{ inputs.susfs_commit }}
 
     - name: Setup Baseband Guard
       if: contains(inputs.feature_set, 'BBG')

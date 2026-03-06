@@ -85,6 +85,12 @@ runs:
       run: |
         SUBLEVEL=${{ inputs.sublevel }}
         SUSFS_VERSION=${{ env.SUSFS_VERSION }}
+        
+        # Skip numeric checks if SUBLEVEL is 'X' (LTS build)
+        if [[ "$SUBLEVEL" == "X" ]]; then
+          echo "LTS build detected (SUBLEVEL=X), skipping numeric patch checks"
+          exit 0
+        fi
 
         if [[ "$SUBLEVEL" -le 209 ]]; then
           sed -i -e 's/goto show_pad;/return 0;/' ./fs/proc/task_mmu.c
@@ -108,6 +114,12 @@ runs:
       run: |
         SUBLEVEL=${{ inputs.sublevel }}
         SUSFS_VERSION=${{ env.SUSFS_VERSION }}
+        
+        # Skip numeric checks if SUBLEVEL is 'X' (LTS build)
+        if [[ "$SUBLEVEL" == "X" ]]; then
+          echo "LTS build detected (SUBLEVEL=X), skipping numeric patch checks"
+          exit 0
+        fi
 
         if [[ "$SUBLEVEL" -le 107 ]]; then
           cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a13-5.10/fdinfo.c.patch ./
@@ -131,6 +143,12 @@ runs:
       run: |
         SUBLEVEL=${{ inputs.sublevel }}
         SUSFS_VERSION=${{ env.SUSFS_VERSION }}
+        
+        # Skip numeric checks if SUBLEVEL is 'X' (LTS build)
+        if [[ "$SUBLEVEL" == "X" ]]; then
+          echo "LTS build detected (SUBLEVEL=X), skipping numeric patch checks"
+          exit 0
+        fi
 
         if [[ "$SUBLEVEL" -le 41 ]]; then
           cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a13-5.15/namespace.c.patch ./
@@ -155,6 +173,12 @@ runs:
       working-directory: ${{ github.workspace }}/kernel/common
       run: |
         SUBLEVEL=${{ inputs.sublevel }}
+        
+        # Skip numeric checks if SUBLEVEL is 'X' (LTS build)
+        if [[ "$SUBLEVEL" == "X" ]]; then
+          echo "LTS build detected (SUBLEVEL=X), skipping numeric patch checks"
+          exit 0
+        fi
 
         if [[ "$SUBLEVEL" -le 148 && "${{ inputs.os_patch_level }}" != "2024-05" ]]; then
           sed -i -e 's/goto show_pad;/return 0;/' ./fs/proc/task_mmu.c
