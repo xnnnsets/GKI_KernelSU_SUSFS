@@ -24,15 +24,14 @@ runs:
       run: |
         SUBLEVEL=${{ env.SUBLEVEL }}
         SUSFS_VERSION=${{ env.SUSFS_VERSION }}
-        exit 0
+
         if [[ "$SUBLEVEL" -le 209 ]]; then
           sed -i -e 's/goto show_pad;/return 0;/' ./fs/proc/task_mmu.c
         fi
 
-        # non-lts fdinfo variant
         if [[ "$SUBLEVEL" -le 117 ]]; then
-          cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a12-5.10/1_fdinfo.c.patch ./
-          patch -p1 < 1_fdinfo.c.patch
+          cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a12-5.10/fdinfo.c.patch ./
+          patch -p1 < fdinfo.c.patch
         fi
 
         if [[ "$SUBLEVEL" -le 43 ]]; then
@@ -47,13 +46,12 @@ runs:
       run: |
         SUBLEVEL=${{ env.SUBLEVEL }}
         SUSFS_VERSION=${{ env.SUSFS_VERSION }}
-        exit 0
+
         if [[ "$SUBLEVEL" -le 107 ]]; then
           cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a13-5.10/fdinfo.c.patch ./
           patch -p1 < fdinfo.c.patch
         fi
 
-        # needed for 149/157 range
         if [[ "$SUBLEVEL" -ge 108 && "$SUBLEVEL" -le 157 ]]; then
           cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a13-5.10/i2c-nomadik.c.patch ./
           patch -p1 < i2c-nomadik.c.patch
@@ -70,7 +68,7 @@ runs:
       run: |
         SUBLEVEL=${{ env.SUBLEVEL }}
         SUSFS_VERSION=${{ env.SUSFS_VERSION }}
-        exit 0
+
         if [[ "$SUBLEVEL" -le 41 ]]; then
           cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a13-5.15/namespace.c.patch ./
           patch -p1 < namespace.c.patch
@@ -94,7 +92,7 @@ runs:
       working-directory: ${{ github.workspace }}/kernel/common
       run: |
         SUBLEVEL=${{ env.SUBLEVEL }}
-        exit 0
+
         if [[ "$SUBLEVEL" -le 148 && "${{ inputs.os_patch_level }}" != "2024-05" ]]; then
           sed -i -e 's/goto show_pad;/return 0;/' ./fs/proc/task_mmu.c
         fi
@@ -106,10 +104,9 @@ runs:
       run: |
         SUBLEVEL=${{ env.SUBLEVEL }}
         SUSFS_VERSION=${{ env.SUSFS_VERSION }}
-        exit 0
-        # 6.1 base patch is needed0
-        #cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a14-6.1/base.c.patch ./
-        #patch -p1 < base.c.patch
+
+        cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a14-6.1/base.c.patch ./
+        patch -p1 < base.c.patch
 
         if [[ "$SUBLEVEL" -le 75 && "${{ inputs.os_patch_level }}" != "2024-05" ]]; then
           sed -i -e 's/goto show_pad;/return 0;/' ./fs/proc/task_mmu.c
@@ -122,21 +119,13 @@ runs:
       run: |
         SUBLEVEL=${{ env.SUBLEVEL }}
         SUSFS_VERSION=${{ env.SUSFS_VERSION }}
-        exit 0
-        # base patch needed for all non-lts ranges seen (30..118 except 126-lts)
-        if [[ "$SUBLEVEL" -le 118 ]]; then
+
+        if [[ "$SUBLEVEL" -le 92 ]]; then
           cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a15-6.6/base.c.patch ./
           patch -p1 < base.c.patch
         fi
 
-        # non-lts task_mmu variant
         if [[ "$SUBLEVEL" -le 58 ]]; then
-          cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a15-6.6/1_task_mmu.c.patch ./
-          patch -p1 < 1_task_mmu.c.patch
-        fi
-
-        # lts task_mmu variant
-        if [[ "$SUBLEVEL" -eq 126 ]]; then
-          cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a15-6.6/2_task_mmu.c.patch ./
-          patch -p1 < 2_task_mmu.c.patch
+          cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a15-6.6/task_mmu.c.patch ./
+          patch -p1 < task_mmu.c.patch
         fi
