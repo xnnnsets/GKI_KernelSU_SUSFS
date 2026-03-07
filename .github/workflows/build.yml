@@ -86,6 +86,10 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y binutils lld
         echo "ld.lld --version"  # Log verification
+        export PATH="/usr/bin:$PATH"
+        which ld  # Should show /usr/bin/ld
+        ld --version  # Verify GNU ld works
+        echo "PATH=$PATH" >> $GITHUB_ENV  # Persist for step
 
     - name: Free Disk Space
       if: true
