@@ -97,7 +97,7 @@ jobs:
         testing: false
 
     - name: Install linker tools
-      if: steps.parse.outputs.kernel_version == '5.10'
+      if: steps.parse.outputs.kernel_version == '5.10' && false
       run: |
         sudo apt-get update
         sudo apt-get install -y binutils lld
