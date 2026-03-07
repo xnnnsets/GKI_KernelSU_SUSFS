@@ -49,7 +49,7 @@ on:
       - main
 
 jobs:
-  fetch-latest-commits:
+  fetch-commits:
     runs-on: ubuntu-latest
     outputs:
       ksu_commit: ${{ steps.fetch.outputs.ksu_commit }}

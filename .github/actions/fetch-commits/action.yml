@@ -38,7 +38,7 @@ runs:
           ksu_commit="${{ inputs.ksu_commit }}"
           echo "Using provided Wild KSU commit: $ksu_commit"
         else
-          ksu_commit=$(get_commit "https://github.com/WildKernels/Wild_KSU.git" "HEAD")
+          ksu_commit=$(get_commit "https://github.com/WildKernels/Wild_KSU.git -b canary")
           echo "Wild KSU: $ksu_commit"
         fi
         echo "ksu_commit=$ksu_commit" >> $GITHUB_OUTPUT
