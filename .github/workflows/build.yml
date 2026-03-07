@@ -149,7 +149,7 @@ jobs:
         echo "sublevel=$SUBLEVEL" >> $GITHUB_OUTPUT
 
     - name: Apply glibc 2.38 Compatibility Fix
-      if: false
+      if: true
       run: |
         # Use SUBLEVEL for LTS builds, otherwise use the input sub_level
         if [[ "$ANDROID_VERSION" == "android13" && "$KERNEL_VERSION" == "5.10" && $SUBLEVEL -le 186 ]] || 
