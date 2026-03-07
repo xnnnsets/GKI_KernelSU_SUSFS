@@ -81,7 +81,7 @@ jobs:
         echo "os_patch_level=$OS_PATCH_LEVEL" >> $GITHUB_OUTPUT
 
     - name: Install linker tools
-      if: inputs.kernel_version == '5.10'
+      if: steps.parse.outputs.kernel_version == '5.10'
       run: |
         sudo apt-get update
         sudo apt-get install -y binutils lld
