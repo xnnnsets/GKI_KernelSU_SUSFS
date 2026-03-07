@@ -52,11 +52,6 @@ runs:
           patch -p1 < fdinfo.c.patch
         fi
 
-        if [[ "$SUBLEVEL" -ge 108 && "$SUBLEVEL" -le 157 ]]; then
-          cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a13-5.10/i2c-nomadik.c.patch ./
-          patch -p1 < i2c-nomadik.c.patch
-        fi
-
         if [[ "$SUBLEVEL" -le 209 && "${{ inputs.os_patch_level }}" != "2024-05" ]]; then
           sed -i -e 's/goto show_pad;/return 0;/' ./fs/proc/task_mmu.c
         fi
@@ -68,7 +63,7 @@ runs:
       run: |
         SUBLEVEL=${{ env.SUBLEVEL }}
         SUSFS_VERSION=${{ env.SUSFS_VERSION }}
-
+        
         if [[ "$SUBLEVEL" -le 41 ]]; then
           cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a13-5.15/namespace.c.patch ./
           patch -p1 < namespace.c.patch
