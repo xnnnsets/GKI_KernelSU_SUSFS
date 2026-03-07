@@ -35,10 +35,18 @@ runs:
         
         # Wild KSU
         if [ -n "${{ inputs.ksu_commit }}" ]; then
-          ksu_commit="${{ inputs.ksu_commit }}"
+          # Try to resolve input as a ref (branch/tag)
+          resolved_commit=$(get_commit "https://github.com/WildKernels/Wild_KSU.git" "${{ inputs.ksu_commit }}")
+          
+          if [ -n "$resolved_commit" ]; then
+            ksu_commit="$resolved_commit"
+          else
+            # If resolution failed, assume input is a commit SHA
+            ksu_commit="${{ inputs.ksu_commit }}"
+          fi
           echo "Using provided Wild KSU commit: $ksu_commit"
         else
-          ksu_commit=$(get_commit "https://github.com/WildKernels/Wild_KSU.git -b canary")
+          ksu_commit=$(get_commit "https://github.com/WildKernels/Wild_KSU.git" "refs/heads/canary")
           echo "Wild KSU: $ksu_commit"
         fi
         echo "ksu_commit=$ksu_commit" >> $GITHUB_OUTPUT
