@@ -80,6 +80,13 @@ jobs:
         echo "sub_level=$SUB_LEVEL" >> $GITHUB_OUTPUT
         echo "os_patch_level=$OS_PATCH_LEVEL" >> $GITHUB_OUTPUT
 
+    - name: Install linker tools
+      if: inputs.kernel_version == '5.10'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y binutils lld
+        echo "ld.lld --version"  # Log verification
+
     - name: Free Disk Space
       if: true
       uses: endersonmenezes/free-disk-space@v3  # Use @main for latest, @v3 for stable
