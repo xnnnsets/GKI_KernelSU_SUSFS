@@ -1,4 +1,4 @@
-name: Setup SUSFS
+name: Setup SUSFS Patches
 description: Clone and apply SUSFS patches with version-specific fixes
 inputs:
   android_version:
