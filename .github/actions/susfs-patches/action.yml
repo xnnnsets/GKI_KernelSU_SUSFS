@@ -47,6 +47,9 @@ runs:
         SUBLEVEL=${{ env.SUBLEVEL }}
         SUSFS_VERSION=${{ env.SUSFS_VERSION }}
 
+        # Fix missing CONFIG_IP_SET_MAX
+        sed -i 's/CONFIG_IP_SET_MAX/65534/g' net/netfilter/ipset/ip_set_core.c
+
         if [[ "$SUBLEVEL" -le 107 ]]; then
           cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a13-5.10/fdinfo.c.patch ./
           patch -p1 < fdinfo.c.patch
