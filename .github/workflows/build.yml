@@ -60,12 +60,7 @@ jobs:
         
         # Everything after the android version is the patch level
         OS_PATCH_LEVEL="$REST"
-        
-        # Special handling for "X" sublevel (LTS builds)
-        if [[ "$SUB_LEVEL" == "X" ]]; then
-             echo "Detected LTS build with wildcard sublevel"
-        fi
-
+  
         echo "Parsed: KERNEL=$KERNEL_VERSION, SUB=$SUB_LEVEL, ANDROID=$ANDROID_VERSION, PATCH=$OS_PATCH_LEVEL"
         
         # Set environment variables for subsequent steps and shell scripts
@@ -95,17 +90,6 @@ jobs:
         rm_cmd: "rmz"  # Use 'rmz' for faster deletion (default: 'rm')
         rmz_version: "3.1.1"  # Required when rm_cmd is 'rmz'
         testing: false
-
-    - name: Install linker tools
-      if: steps.parse.outputs.kernel_version == '5.10' && false
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y binutils lld
-        echo "ld.lld --version"  # Log verification
-        export PATH="/usr/bin:$PATH"
-        which ld  # Should show /usr/bin/ld
-        ld --version  # Verify GNU ld works
-        echo "PATH=$PATH" >> $GITHUB_ENV  # Persist for step
 
     - name: Setup Build Environment
       run: |
@@ -210,6 +194,15 @@ jobs:
         os_patch_level: ${{ steps.parse.outputs.os_patch_level }}
         sublevel: ${{ steps.extract.outputs.sublevel }}
         susfs_commit: ${{ inputs.susfs_commit }}
+
+    - name: Setup SUSFS Patches
+      if: contains(inputs.feature_set, 'SUSFS')
+      uses: ./.github/actions/susfs-patches
+      with:
+        android_version: ${{ steps.parse.outputs.android_version }}
+        kernel_version: ${{ steps.parse.outputs.kernel_version }}
+        os_patch_level: ${{ steps.parse.outputs.os_patch_level }}
+        sublevel: ${{ steps.extract.outputs.sublevel }}
 
     - name: Setup Baseband Guard
       if: contains(inputs.feature_set, 'BBG')
