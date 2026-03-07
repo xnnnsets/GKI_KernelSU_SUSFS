@@ -80,17 +80,6 @@ jobs:
         echo "sub_level=$SUB_LEVEL" >> $GITHUB_OUTPUT
         echo "os_patch_level=$OS_PATCH_LEVEL" >> $GITHUB_OUTPUT
 
-    - name: Install linker tools
-      if: steps.parse.outputs.kernel_version == '5.10'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y binutils lld
-        echo "ld.lld --version"  # Log verification
-        export PATH="/usr/bin:$PATH"
-        which ld  # Should show /usr/bin/ld
-        ld --version  # Verify GNU ld works
-        echo "PATH=$PATH" >> $GITHUB_ENV  # Persist for step
-
     - name: Free Disk Space
       if: true
       uses: endersonmenezes/free-disk-space@v3  # Use @main for latest, @v3 for stable
@@ -106,6 +95,17 @@ jobs:
         rm_cmd: "rmz"  # Use 'rmz' for faster deletion (default: 'rm')
         rmz_version: "3.1.1"  # Required when rm_cmd is 'rmz'
         testing: false
+
+    - name: Install linker tools
+      if: steps.parse.outputs.kernel_version == '5.10'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y binutils lld
+        echo "ld.lld --version"  # Log verification
+        export PATH="/usr/bin:$PATH"
+        which ld  # Should show /usr/bin/ld
+        ld --version  # Verify GNU ld works
+        echo "PATH=$PATH" >> $GITHUB_ENV  # Persist for step
 
     - name: Setup Build Environment
       run: |
