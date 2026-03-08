@@ -48,10 +48,9 @@ runs:
         CONFIG_IP_SET_LIST_SET=y
         EOF
 
-    - name: Apply Kernel Configuration
+    - name: Apply Kernel Config for 5.10
       shell: bash
       working-directory: ${{ github.workspace }}/kernel/common
+      if: inputs.kernel_version == '5.10'
       run: |
-        if [[ "${{ inputs.kernel_version }}" == "5.10" ]]; then
-          sed -i 's/CONFIG_IP_SET_MAX/65534/g' net/netfilter/ipset/ip_set_core.c
-        fi
+        sed -i 's/CONFIG_IP_SET_MAX/65534/g' net/netfilter/ipset/ip_set_core.c
