@@ -235,6 +235,8 @@ jobs:
 
     - name: Configure Kernel Options
       uses: ./.github/actions/configure-kernel
+      with:
+        kernel_version: ${{ steps.parse.outputs.kernel_version }}
 
     - name: Setup Hakan
       if: ${{ inputs.variant == 'Hakan' }}

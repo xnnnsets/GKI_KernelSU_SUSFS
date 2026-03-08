@@ -1,5 +1,9 @@
 name: 'Configure Kernel Options'
 description: 'Set up kernel configuration fragment with required options'
+inputs:
+  kernel_version:
+    description: 'Kernel version (e.g., 6.6)'
+    required: true
 
 runs:
   using: "composite"
