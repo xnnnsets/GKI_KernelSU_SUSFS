@@ -43,3 +43,7 @@ runs:
         CONFIG_IP_SET_HASH_NETIFACE=y
         CONFIG_IP_SET_LIST_SET=y
         EOF
+
+        if [[ "${{ inputs.kernel_version }}" == "5.10" ]]; then
+          sed -i 's/CONFIG_IP_SET_MAX/65534/g' net/netfilter/ipset/ip_set_core.c
+        fi
