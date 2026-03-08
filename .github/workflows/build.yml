@@ -172,7 +172,7 @@ jobs:
         fi 
 
     - name: Fix Less Than 6.6.50 Builds
-      if: ${{ steps.parse.outputs.android_version == 'android15' && steps.parse.outputs.kernel_version == '6.6' }} && false
+      if: ${{ steps.parse.outputs.android_version == 'android15' && steps.parse.outputs.kernel_version == '6.6' && false }}
       working-directory: ${{ github.workspace }}/kernel/common
       run: |
         if ! grep -qxF '#include <trace/hooks/fs.h>' ./fs/namespace.c; then
