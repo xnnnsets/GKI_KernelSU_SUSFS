@@ -126,7 +126,7 @@ runs:
           patch -p1 < task_mmu.c.patch
         fi
 
-        if [[ "$SUBLEVEL" -le 46 ]]; then
-          cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a15-6.6/namespace.c.patch ./
-          patch -p1 < namespace.c.patch
-        fi
+        #if [[ "$SUBLEVEL" -le 46 ]]; then
+        #  cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a15-6.6/namespace.c.patch ./
+        #  patch -p1 < namespace.c.patch
+        #fi
