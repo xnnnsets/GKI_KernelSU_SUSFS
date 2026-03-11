@@ -331,7 +331,7 @@ jobs:
         check_selected "a16-6-12" "build-a16-6-12" "${{ needs.build-a16-6-12.result }}"
         check_selected "custom" "build-custom" "${{ needs.build-custom.result }}"
         check_selected "lts" "build-lts" "${{ needs.build-lts.result }}"
-        check_selected "testing" "build-testing" "${{ needs.build-testing.result }}"
+        check_selected "bypass" "build-bypass" "${{ needs.build-bypass.result }}"
 
         if [[ "$failed" -ne 0 ]]; then
           exit 1
