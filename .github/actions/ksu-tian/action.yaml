@@ -1,5 +1,5 @@
-name: Setup Wild KSU
-description: Download and configure Wild KSU with version tracking
+name: Setup KSU-Tian
+description: Download and configure KSU-Tian with version tracking
 inputs:
   ksu_commit:
     description: "KSU Commit"
@@ -9,12 +9,12 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Download Wild KSU
+    - name: Download KSU-Tian
       shell: bash
       working-directory: ${{ github.workspace }}/kernel
       run: |
         # Clone the repository
-        curl -LSs "https://raw.githubusercontent.com/WildKernels/Wild_KSU/stable/kernel/setup.sh" | bash -s ${{ inputs.ksu_commit }}
+        curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s ${{ inputs.ksu_commit }}
 
     - name: Enable KernelSU Config
       shell: bash
@@ -22,14 +22,14 @@ runs:
       run: |
         cat >> "${{ github.workspace }}/wild_gki.fragment" << 'EOF'
         # KernelSU Configuration
-        CONFIG_TMPFS_XATTR=y
         CONFIG_KSU=y
+        CONFIG_TMPFS_XATTR=y
         EOF
     
     - name: Extract KSU Version Info
       id: ksu-version
       shell: bash
-      working-directory: ${{ github.workspace }}/kernel/Wild_KSU
+      working-directory: ${{ github.workspace }}/kernel/KernelSU
       run: |
         # Extract and export KSU version info
         KSU_GIT_VERSION=$(git rev-list --count HEAD 2>/dev/null)
@@ -37,6 +37,5 @@ runs:
         KSU_COMMIT=$(git rev-parse --short HEAD 2>/dev/null)
         KSU_VERSION=$((30000 + KSU_GIT_VERSION))
         
-        echo "KSU_GIT_TAG=$KSU_GIT_TAG" >> $GITHUB_ENV
         echo "KSU_VERSION=$KSU_VERSION" >> $GITHUB_ENV
         echo "KSU_COMMIT=$KSU_COMMIT" >> $GITHUB_ENV

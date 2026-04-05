@@ -185,6 +185,13 @@ jobs:
       with:
         ksu_commit: ${{ inputs.ksu_commit }}
 
+    - name: Setup KSU-Tian
+      if: contains(inputs.feature_set, 'KSU')
+      uses: ./.github/actions/ksu-tian
+      with:
+        ksu_commit: ${{ inputs.ksu_commit }}
+
+
     - name: Setup SUSFS
       if: contains(inputs.feature_set, 'SUSFS')
       uses: ./.github/actions/susfs
@@ -194,6 +201,7 @@ jobs:
         os_patch_level: ${{ steps.parse.outputs.os_patch_level }}
         sublevel: ${{ steps.extract.outputs.sublevel }}
         susfs_commit: ${{ inputs.susfs_commit }}
+        feature_set: ${{ inputs.feature_set }}
 
     - name: Setup SUSFS Patches
       if: contains(inputs.feature_set, 'SUSFS')

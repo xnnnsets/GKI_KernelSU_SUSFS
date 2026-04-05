@@ -36,6 +36,9 @@ on:
           - WKSU+SUSFS+BBG
           - WKSU+BBG
           - WKSU
+          - KSU-TIAN+SUSFS+BBG
+          - KSU-TIAN+BBG
+          - KSU-TIAN
           - BBG
           - None
         default: WKSU+SUSFS+BBG
