@@ -104,6 +104,10 @@ runs:
         cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a14-6.1/base.c.patch ./
         patch -p1 < base.c.patch
 
+        if [[ "$SUBLEVEL" -ge 165 ]]; then
+          curl -L https://raw.githubusercontent.com/xnnnsets/patch/refs/heads/main/WKGKI-repatch-rej-susfs-v2.10-kernel-6.1.X.lts.patch | patch -p1
+        fi
+
         if [[ "$SUBLEVEL" -le 75 && "${{ inputs.os_patch_level }}" != "2024-05" ]]; then
           sed -i -e 's/goto show_pad;/return 0;/' ./fs/proc/task_mmu.c
         fi
@@ -124,4 +128,16 @@ runs:
         if [[ "$SUBLEVEL" -le 58 ]]; then
           cp ${{ github.workspace }}/kernel_patches/wild/susfs_fix_patches/v${SUSFS_VERSION}/a15-6.6/task_mmu.c.patch ./
           patch -p1 < task_mmu.c.patch
+        fi
+
+    - name: Apply Android 16 6.12 Fixes
+      if: inputs.android_version == 'android16' && inputs.kernel_version == '6.12'
+      shell: bash
+      working-directory: ${{ github.workspace }}/kernel/common
+      run: |
+        SUBLEVEL=${{ env.SUBLEVEL }}
+        SUSFS_VERSION=${{ env.SUSFS_VERSION }}
+
+        if [[ "$SUBLEVEL" -ge 165 ]]; then
+          curl -L https://raw.githubusercontent.com/xnnnsets/patch/refs/heads/main/0001-WKGKI-repatch-rej-susfs-v2.10-kernel-6.12.X.lts.patc.patch | patch -p1
         fi
