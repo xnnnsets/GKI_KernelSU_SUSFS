@@ -138,6 +138,6 @@ runs:
         SUBLEVEL=${{ env.SUBLEVEL }}
         SUSFS_VERSION=${{ env.SUSFS_VERSION }}
 
-        if [[ "$SUBLEVEL" -ge 165 ]]; then
+        if [[ "$SUBLEVEL" -ge 76 ]]; then
           curl -L https://raw.githubusercontent.com/xnnnsets/patch/refs/heads/main/0001-WKGKI-repatch-rej-susfs-v2.10-kernel-6.12.X.lts.patc.patch | patch -p1
         fi
