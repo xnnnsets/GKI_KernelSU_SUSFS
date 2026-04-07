@@ -398,6 +398,16 @@ jobs:
 
     - name: Set release body
       run: |
+        SUSFS_VERSION="$(grep 'SUSFS_VERSION' "${{ github.workspace }}/susfs4ksu/kernel_patches/include/linux/susfs.h" 2>/dev/null | sed -nE 's/.*"v([^"]+)".*/\1/p' | head -n1)"
+        SUSFS_VERSION="${SUSFS_VERSION:-unknown}"
+        FEATURE_LINE=""
+
+        if [[ "${{ inputs.feature_set }}" == "KSU-TIAN+SUSFS*" ]]; then
+          FEATURE_LINE="-> KernelSU Manager Tian"
+        elif [[ "${{ inputs.feature_set }}" == "WKSU+SUSFS*" ]]; then
+          FEATURE_LINE="-> Wild KSU Manager Support, Also Compatible with KernelSU-Next Manager"
+        fi
+
         cat << 'EOF' > release_body.md
 
         **IMPORTANT DISCLAIMER**
@@ -406,8 +416,8 @@ jobs:
         Please ensure you have proper backups before installation.
 
         Features:
-        -> Wild KSU Manager Support, Also Compatible with KernelSU-Next Manager
-        -> SUSFS ඞ v2.0.0
+        ${FEATURE_LINE}
+        -> SUSFS ඞ v${SUSFS_VERSION
         -> SUSFS Inline Hooks
         -> IPSet Support for Advanced Network Filtering
         -> BBRv1 TCP Congestion Control
@@ -432,6 +442,7 @@ jobs:
         Manager:
         -> Wild KSU Manager: https://github.com/WildKernels/Wild_KSU
         -> Next: https://github.com/KernelSU-Next/KernelSU-Next
+        -> KernelSU-Tian: https://github.com/tiann/KernelSU
 
         Module: 
         -> https://github.com/sidex15/ksu_module_susfs
