@@ -398,15 +398,27 @@ jobs:
 
     - name: Set release body
       run: |
-        SUSFS_VERSION="$(grep 'SUSFS_VERSION' "${{ github.workspace }}/susfs4ksu/kernel_patches/include/linux/susfs.h" 2>/dev/null | sed -nE 's/.*"v([^"]+)".*/\1/p' | head -n1)"
-        SUSFS_VERSION="${SUSFS_VERSION:-unknown}"
+        SUSFS_VERSION="$(curl -fsSL 'https://gitlab.com/simonpunk/susfs4ksu/-/raw/gki-android14-6.1/kernel_patches/include/linux/susfs.h?ref_type=heads' | sed -nE 's/.*"([^"]+)".*/\1/p' | head -n1)"
+        SUSFS_VERSION="${SUSFS_VERSION:-None}"
+        HOOKS_LINE="-> Non Hooks Root"
         FEATURE_LINE=""
 
-        if [[ "${{ inputs.feature_set }}" == "KSU-TIAN+SUSFS*" ]]; then
-          FEATURE_LINE="-> KernelSU Manager Tian"
-        elif [[ "${{ inputs.feature_set }}" == "WKSU+SUSFS*" ]]; then
-          FEATURE_LINE="-> Wild KSU Manager Support, Also Compatible with KernelSU-Next Manager"
-        fi
+        case "${{ inputs.feature_set }}" in
+          KSU-TIAN+SUSFS+BBG|WKSU+SUSFS+BBG)
+            if [[ "${{ inputs.feature_set }}" == KSU-TIAN* ]]; then
+              FEATURE_LINE="-> KernelSU Manager Tian"
+            else
+              FEATURE_LINE="-> Wild KSU Manager Support, Also Compatible with KernelSU-Next Manager"
+            fi
+            HOOKS_LINE="-> SUSFS Inline Hooks"
+            ;;
+          KSU-TIAN|KSU-TIAN+BBG|WKSU|WKSU+BBG)
+            FEATURE_LINE="-> Kprobes Hooks"
+            ;;
+          BBG|None)
+            FEATURE_LINE="-> Non Hooks Root"
+            ;;
+        esac
 
         cat << EOF > release_body.md
 
@@ -417,8 +429,8 @@ jobs:
 
         Features:
         ${FEATURE_LINE}
-        -> SUSFS ඞ v${SUSFS_VERSION}
-        -> SUSFS Inline Hooks
+        -> SUSFS ඞ ${SUSFS_VERSION}
+        ${HOOKS_LINE}
         -> IPSet Support for Advanced Network Filtering
         -> BBRv1 TCP Congestion Control
         -> BBG: https://github.com/vc-teahouse/Baseband-guard
