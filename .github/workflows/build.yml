@@ -180,13 +180,13 @@ jobs:
         fi
 
     - name: Setup Wild KSU
-      if: contains(inputs.feature_set, 'WKSU')
+      if: contains(inputs.feature_set, 'WKSU') && !contains(inputs.feature_set, 'KSU-TIAN')
       uses: ./.github/actions/wksu
       with:
         ksu_commit: ${{ inputs.ksu_commit }}
 
     - name: Setup KSU-Tian
-      if: contains(inputs.feature_set, 'KSU')
+      if: contains(inputs.feature_set, 'KSU-TIAN')
       uses: ./.github/actions/ksu-tian
       with:
         ksu_commit: ${{ inputs.ksu_commit }}
