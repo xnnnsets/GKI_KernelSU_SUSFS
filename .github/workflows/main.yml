@@ -285,7 +285,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.release_type != 'Actions') || startsWith(github.ref, 'refs/tags/v') }}
+    if: ${{ always() && ((github.event_name == 'workflow_dispatch' && inputs.release_type != 'Actions') || startsWith(github.ref, 'refs/tags/v')) }}
     permissions:
       contents: write
     needs:
