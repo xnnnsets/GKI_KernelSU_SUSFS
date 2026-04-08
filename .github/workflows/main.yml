@@ -408,7 +408,7 @@ jobs:
           FEATURE_LINE="-> Wild KSU Manager Support, Also Compatible with KernelSU-Next Manager"
         fi
 
-        cat << 'EOF' > release_body.md
+        cat << EOF > release_body.md
 
         **IMPORTANT DISCLAIMER**
         This software is provided for testing and educational purposes only. Use at your own risk.
@@ -417,7 +417,7 @@ jobs:
 
         Features:
         ${FEATURE_LINE}
-        -> SUSFS ඞ v${SUSFS_VERSION
+        -> SUSFS ඞ v${SUSFS_VERSION}
         -> SUSFS Inline Hooks
         -> IPSet Support for Advanced Network Filtering
         -> BBRv1 TCP Congestion Control
