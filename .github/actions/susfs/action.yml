@@ -16,6 +16,9 @@ inputs:
   susfs_commit:
     description: 'Commit map (branch:commit,branch:commit...)'
     required: false
+  feature_set:
+    description: 'Feature set from workflow (e.g., KSU+SUSFS+BBG)'
+    required: false
 
 runs:
   using: composite
@@ -86,3 +89,12 @@ runs:
         cp "${{ github.workspace }}/susfs4ksu/kernel_patches/include/linux/"* "${{ github.workspace }}/kernel/common/include/linux/"
         cp ${{ github.workspace }}/susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}.patch ./
         patch -p1 < 50_add_susfs_in_gki-${{ inputs.android_version }}-${{ inputs.kernel_version }}.patch || true
+
+        if [[ "${{ inputs.feature_set }}" == KSU-TIAN+SUSFS* ]]; then
+          echo "Patch KernelSU"
+          cp "${{ github.workspace }}/susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch" ${{ github.workspace }}/kernel/KernelSU/
+          cd ${{ github.workspace }}/kernel/KernelSU/
+          patch -p1 < 10_enable_susfs_for_ksu.patch || true
+        else
+          echo "Not KSU-TIAN+SUSFS, skip 10_enable_susfs_for_ksu.patch"
+        fi

@@ -36,6 +36,9 @@ on:
           - WKSU+SUSFS+BBG
           - WKSU+BBG
           - WKSU
+          - KSU-TIAN+SUSFS+BBG
+          - KSU-TIAN+BBG
+          - KSU-TIAN
           - BBG
           - None
         default: WKSU+SUSFS+BBG
@@ -282,7 +285,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    if: ${{ (github.event_name == 'workflow_dispatch' && inputs.release_type != 'Actions') || startsWith(github.ref, 'refs/tags/v') }}
+    if: ${{ always() && ((github.event_name == 'workflow_dispatch' && inputs.release_type != 'Actions') || startsWith(github.ref, 'refs/tags/v')) }}
     permissions:
       contents: write
     needs:
@@ -395,7 +398,29 @@ jobs:
 
     - name: Set release body
       run: |
-        cat << 'EOF' > release_body.md
+        SUSFS_VERSION="$(curl -fsSL 'https://gitlab.com/simonpunk/susfs4ksu/-/raw/gki-android14-6.1/kernel_patches/include/linux/susfs.h?ref_type=heads' | sed -nE 's/.*"([^"]+)".*/\1/p' | head -n1)"
+        SUSFS_VERSION="${SUSFS_VERSION:-None}"
+        HOOKS_LINE="-> Non Hooks Root"
+        FEATURE_LINE=""
+
+        case "${{ inputs.feature_set }}" in
+          KSU-TIAN+SUSFS+BBG|WKSU+SUSFS+BBG)
+            if [[ "${{ inputs.feature_set }}" == KSU-TIAN* ]]; then
+              FEATURE_LINE="-> KernelSU Manager Tian"
+            else
+              FEATURE_LINE="-> Wild KSU Manager Support, Also Compatible with KernelSU-Next Manager"
+            fi
+            HOOKS_LINE="-> SUSFS Inline Hooks"
+            ;;
+          KSU-TIAN|KSU-TIAN+BBG|WKSU|WKSU+BBG)
+            FEATURE_LINE="-> Kprobes Hooks"
+            ;;
+          BBG|None)
+            FEATURE_LINE="-> Non Hooks Root"
+            ;;
+        esac
+
+        cat << EOF > release_body.md
 
         **IMPORTANT DISCLAIMER**
         This software is provided for testing and educational purposes only. Use at your own risk.
@@ -403,9 +428,9 @@ jobs:
         Please ensure you have proper backups before installation.
 
         Features:
-        -> Wild KSU Manager Support, Also Compatible with KernelSU-Next Manager
-        -> SUSFS ඞ v2.0.0
-        -> SUSFS Inline Hooks
+        ${FEATURE_LINE}
+        -> SUSFS ඞ ${SUSFS_VERSION}
+        ${HOOKS_LINE}
         -> IPSet Support for Advanced Network Filtering
         -> BBRv1 TCP Congestion Control
         -> BBG: https://github.com/vc-teahouse/Baseband-guard
@@ -429,6 +454,7 @@ jobs:
         Manager:
         -> Wild KSU Manager: https://github.com/WildKernels/Wild_KSU
         -> Next: https://github.com/KernelSU-Next/KernelSU-Next
+        -> KernelSU-Tian: https://github.com/tiann/KernelSU
 
         Module: 
         -> https://github.com/sidex15/ksu_module_susfs
