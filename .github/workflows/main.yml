@@ -214,7 +214,7 @@ jobs:
     secrets: inherit
 
   rej:
-    if: always()
+    if: ${{ always() && !cancelled() }}
     runs-on: ubuntu-latest
     permissions:
       actions: read
@@ -285,7 +285,7 @@ jobs:
 
   release:
     runs-on: ubuntu-latest
-    if: ${{ always() && ((github.event_name == 'workflow_dispatch' && inputs.release_type != 'Actions') || startsWith(github.ref, 'refs/tags/v')) }}
+    if: ${{ always() && !cancelled() && ((github.event_name == 'workflow_dispatch' && inputs.release_type != 'Actions') || startsWith(github.ref, 'refs/tags/v')) }}
     permissions:
       contents: write
     needs:
